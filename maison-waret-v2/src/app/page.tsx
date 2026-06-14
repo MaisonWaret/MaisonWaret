@@ -81,16 +81,16 @@ export default async function Home() {
       <main className="overflow-hidden bg-[#fffaf5]">
         <section className="relative">
           <div className="absolute inset-x-0 top-0 -z-10 h-[640px] bg-[radial-gradient(circle_at_top_left,_rgba(215,168,140,0.28),_transparent_38%),radial-gradient(circle_at_top_right,_rgba(123,71,48,0.16),_transparent_34%),linear-gradient(180deg,#fffaf5_0%,#fff4ea_100%)]" />
-          <div className="mx-auto grid w-full max-w-7xl gap-8 px-6 py-16 lg:grid-cols-[1.08fr_0.92fr] lg:px-10">
-            <section className="rounded-[38px] border border-[#ead8cc] bg-white/92 p-8 shadow-[0_22px_55px_rgba(92,50,28,0.12)] backdrop-blur">
+          <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-8 lg:px-10">
+            <section className="rounded-[30px] border border-[#ead8cc] bg-white/92 p-6 shadow-[0_22px_55px_rgba(92,50,28,0.12)] backdrop-blur sm:rounded-[38px] sm:p-8">
               <MaisonWaretLogo className="mb-6 sm:mb-8" />
               <p className="text-xs font-semibold uppercase tracking-[0.26em] text-[#9d5c3f]">
                 Patisserie artisanale sur commande
               </p>
-              <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[1.02] text-[#33251d] sm:text-6xl">
+              <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-[1.04] text-[#33251d] sm:text-5xl lg:text-6xl">
                 Une vitrine plus desirée, des creations gourmandes, et une commande simple a vivre.
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-[#6d5a50]">
+              <p className="mt-6 max-w-2xl text-base leading-7 text-[#6d5a50] sm:text-lg sm:leading-8">
                 Maison Waret imagine des boxes de viennoiseries, des douceurs a partager et des
                 creations sur demande avec une presentation elegante, un ton premium et un service
                 local pense pour faire plaisir.
@@ -124,13 +124,13 @@ export default async function Home() {
             </section>
 
             <aside className="grid gap-4">
-              <article className="relative overflow-hidden rounded-[34px] border border-[#ead8cc] bg-[linear-gradient(135deg,#3d2a21,#7e4e38)] p-7 text-white shadow-[0_20px_55px_rgba(61,42,33,0.24)]">
+              <article className="relative overflow-hidden rounded-[28px] border border-[#ead8cc] bg-[linear-gradient(135deg,#3d2a21,#7e4e38)] p-6 text-white shadow-[0_20px_55px_rgba(61,42,33,0.24)] sm:rounded-[34px] sm:p-7">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent_26%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.12),transparent_32%)]" />
                 <div className="relative">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#f4cdb7]">
                     Livraison locale
                   </p>
-                  <h2 className="mt-3 font-serif text-4xl leading-tight">
+                  <h2 className="mt-3 font-serif text-3xl leading-tight sm:text-4xl">
                     {getDeliveryCoverageShortLabel()}
                   </h2>
                   <p className="mt-4 text-sm leading-7 text-white/78">
@@ -168,12 +168,12 @@ export default async function Home() {
                 ].map((card) => (
                   <article
                     key={card.label}
-                    className="rounded-[28px] border border-[#ead8cc] bg-white p-5 shadow-[0_16px_38px_rgba(92,50,28,0.08)]"
+                    className="rounded-[24px] border border-[#ead8cc] bg-white p-5 shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[28px]"
                   >
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#9d5c3f]">
                       {card.label}
                     </p>
-                    <p className="mt-3 font-serif text-4xl text-[#33251d]">{card.value}</p>
+                    <p className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">{card.value}</p>
                     <p className="mt-2 text-sm leading-6 text-[#6d5a50]">{card.detail}</p>
                   </article>
                 ))}
@@ -182,7 +182,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-10">
+        <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
           <div className="grid gap-5 xl:grid-cols-3">
             {serviceCards.map((card) => (
               <article
@@ -192,7 +192,7 @@ export default async function Home() {
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
                   {card.label}
                 </p>
-                <h2 className="mt-4 font-serif text-3xl leading-tight text-[#33251d]">
+                <h2 className="mt-4 font-serif text-2xl leading-tight text-[#33251d] sm:text-3xl">
                   {card.title}
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-[#6d5a50]">{card.detail}</p>
@@ -203,14 +203,14 @@ export default async function Home() {
 
         <section
           id="best-sellers"
-          className="mx-auto w-full max-w-7xl px-6 py-14 lg:px-10"
+          className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-10"
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
                 Nos incontournables
               </p>
-              <h2 className="mt-3 font-serif text-4xl text-[#33251d]">
+              <h2 className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">
                 Les best sellers qui donnent envie des la premiere seconde
               </h2>
             </div>
@@ -220,7 +220,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {bestSellers.map((product) => (
               <StorefrontProductCard key={product.id} product={product} compact />
             ))}
@@ -228,7 +228,7 @@ export default async function Home() {
         </section>
 
         {curatedSections.length > 0 ? (
-          <section className="mx-auto w-full max-w-7xl px-6 py-4 lg:px-10">
+          <section className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-10">
             <div
               className={`grid gap-10 ${curatedSections.length > 1 ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}
             >
@@ -239,13 +239,13 @@ export default async function Home() {
                       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
                         {section.eyebrow}
                       </p>
-                      <h2 className="mt-3 font-serif text-4xl text-[#33251d]">
+                      <h2 className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">
                         {section.title}
                       </h2>
                     </div>
                   </div>
 
-                  <div className="mt-6 grid gap-6">
+                    <div className="mt-6 grid gap-5">
                     {section.products.map((product) => (
                       <StorefrontProductCard key={product.id} product={product} compact />
                     ))}
@@ -256,30 +256,30 @@ export default async function Home() {
           </section>
         ) : null}
 
-        <section className="mx-auto w-full max-w-7xl px-6 py-6 lg:px-10">
+        <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-10">
           <div className="grid gap-5 lg:grid-cols-3">
             {occasionCards.map((occasion) => (
               <article
                 key={occasion.title}
-                className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_14px_32px_rgba(92,50,28,0.08)]"
+                className="rounded-[26px] border border-[#ead8cc] bg-white p-6 shadow-[0_14px_32px_rgba(92,50,28,0.08)] sm:rounded-[30px]"
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#9d5c3f]">
                   Moment gourmand
                 </p>
-                <h3 className="mt-4 font-serif text-3xl text-[#33251d]">{occasion.title}</h3>
+                <h3 className="mt-4 font-serif text-2xl text-[#33251d] sm:text-3xl">{occasion.title}</h3>
                 <p className="mt-4 text-sm leading-7 text-[#6d5a50]">{occasion.text}</p>
               </article>
             ))}
           </div>
         </section>
 
-        <section id="univers" className="mx-auto w-full max-w-7xl px-6 py-10 lg:px-10">
+        <section id="univers" className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-10">
           <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-            <article className="rounded-[36px] border border-[#ead8cc] bg-white p-8 shadow-[0_16px_38px_rgba(92,50,28,0.08)]">
+            <article className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[36px] sm:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#9d5c3f]">
                 {brandStory.eyebrow}
               </p>
-              <h2 className="mt-3 font-serif text-4xl leading-tight text-[#33251d]">
+              <h2 className="mt-3 font-serif text-3xl leading-tight text-[#33251d] sm:text-4xl">
                 {brandStory.title}
               </h2>
               <p className="mt-5 text-sm leading-7 text-[#6d5a50]">{brandStory.intro}</p>
@@ -293,7 +293,7 @@ export default async function Home() {
               </p>
             </article>
 
-            <article className="rounded-[36px] border border-[#ead8cc] bg-[#fff3e8] p-8 shadow-[0_16px_38px_rgba(92,50,28,0.08)]">
+            <article className="rounded-[30px] border border-[#ead8cc] bg-[#fff3e8] p-6 shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[36px] sm:p-8">
               <MaisonWaretLogo />
               <div className="mt-8 grid gap-4">
                 {brandStory.values.map((value) => (
@@ -310,13 +310,13 @@ export default async function Home() {
         </section>
 
         {reviews.length > 0 ? (
-          <section className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-10">
+          <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
                   Avis clients
                 </p>
-                <h2 className="mt-3 font-serif text-4xl text-[#33251d]">
+                <h2 className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">
                   Ce que les clients retiennent de la maison
                 </h2>
               </div>
@@ -329,7 +329,7 @@ export default async function Home() {
               {reviews.map((review) => (
                 <article
                   key={review.id}
-                  className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_14px_32px_rgba(92,50,28,0.08)]"
+                  className="rounded-[26px] border border-[#ead8cc] bg-white p-6 shadow-[0_14px_32px_rgba(92,50,28,0.08)] sm:rounded-[30px]"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <span className="rounded-full bg-[#fff3e8] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#9d5c3f]">
@@ -337,7 +337,7 @@ export default async function Home() {
                     </span>
                     <span className="text-sm font-semibold text-[#8a5a3c]">{review.rating}/5</span>
                   </div>
-                  <h3 className="mt-4 font-serif text-2xl text-[#33251d]">
+                  <h3 className="mt-4 font-serif text-xl text-[#33251d] sm:text-2xl">
                     {review.title || "Un retour client"}
                   </h3>
                   <p className="mt-4 text-sm leading-7 text-[#6d5a50]">&quot;{review.message}&quot;</p>
@@ -351,13 +351,13 @@ export default async function Home() {
           </section>
         ) : null}
 
-        <section id="livraison" className="mx-auto w-full max-w-7xl px-6 py-14 lg:px-10">
+        <section id="livraison" className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
           <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <article className="rounded-[36px] border border-[#ead8cc] bg-[#fff3e8] px-8 py-10 shadow-[0_16px_38px_rgba(92,50,28,0.08)]">
+            <article className="rounded-[30px] border border-[#ead8cc] bg-[#fff3e8] px-6 py-8 shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[36px] sm:px-8 sm:py-10">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#9d5c3f]">
                 Livraison et retrait
               </p>
-              <h2 className="mt-3 max-w-3xl font-serif text-4xl leading-tight text-[#33251d]">
+              <h2 className="mt-3 max-w-3xl font-serif text-3xl leading-tight text-[#33251d] sm:text-4xl">
                 Un service local pense autour de Baron, dans l&apos;Oise, pour garder quelque chose
                 de simple et premium.
               </h2>
@@ -384,7 +384,7 @@ export default async function Home() {
               </div>
             </article>
 
-            <article className="rounded-[36px] border border-[#ead8cc] bg-white p-8 shadow-[0_16px_38px_rgba(92,50,28,0.08)]">
+            <article className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[36px] sm:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
                 Ce que le client comprend
               </p>
@@ -402,14 +402,14 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="catalogue" className="mx-auto w-full max-w-7xl px-6 py-6 lg:px-10">
-          <div className="rounded-[36px] border border-[#ead8cc] bg-[#33251d] px-8 py-10 text-white shadow-[0_16px_38px_rgba(51,37,29,0.18)]">
+        <section id="catalogue" className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-10">
+          <div className="rounded-[30px] border border-[#ead8cc] bg-[#33251d] px-6 py-8 text-white shadow-[0_16px_38px_rgba(51,37,29,0.18)] sm:rounded-[36px] sm:px-8 sm:py-10">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#9d5c3f]">
                   Catalogue complet
                 </p>
-                <h2 className="mt-3 max-w-3xl font-serif text-4xl leading-tight text-white">
+                <h2 className="mt-3 max-w-3xl font-serif text-3xl leading-tight text-white sm:text-4xl">
                   Envie d&apos;aller plus loin ? Le catalogue complet met toute la selection en scene.
                 </h2>
               </div>
@@ -446,7 +446,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="processus" className="mx-auto w-full max-w-7xl px-6 py-4 lg:px-10">
+        <section id="processus" className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-10">
           <div className="grid gap-5 lg:grid-cols-3">
             {[
               {
@@ -467,24 +467,24 @@ export default async function Home() {
             ].map((step) => (
               <article
                 key={step.step}
-                className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_14px_32px_rgba(92,50,28,0.08)]"
+                className="rounded-[26px] border border-[#ead8cc] bg-white p-6 shadow-[0_14px_32px_rgba(92,50,28,0.08)] sm:rounded-[30px]"
               >
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#9d5c3f] text-lg font-semibold text-white">
                   {step.step}
                 </span>
-                <h3 className="mt-4 font-serif text-2xl text-[#33251d]">{step.title}</h3>
+                <h3 className="mt-4 font-serif text-xl text-[#33251d] sm:text-2xl">{step.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-[#6d5a50]">{step.text}</p>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl px-6 py-14 lg:px-10">
-          <div className="rounded-[36px] bg-[#33251d] px-8 py-10 text-white shadow-[0_20px_55px_rgba(51,37,29,0.22)]">
+        <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
+          <div className="rounded-[30px] bg-[#33251d] px-6 py-8 text-white shadow-[0_20px_55px_rgba(51,37,29,0.22)] sm:rounded-[36px] sm:px-8 sm:py-10">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#f4cdb7]">
               Finaliser
             </p>
-            <h2 className="mt-3 max-w-3xl font-serif text-4xl leading-tight">
+            <h2 className="mt-3 max-w-3xl font-serif text-3xl leading-tight sm:text-4xl">
               Une demande simple, premium et rassurante pour commander sans friction.
             </h2>
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/75">

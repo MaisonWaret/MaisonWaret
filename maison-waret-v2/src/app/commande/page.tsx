@@ -16,15 +16,15 @@ export default async function CommandePage() {
         <section className="relative">
           <div className="absolute inset-x-0 top-0 -z-10 h-[420px] bg-[radial-gradient(circle_at_top_left,_rgba(212,162,136,0.26),_transparent_40%),radial-gradient(circle_at_top_right,_rgba(138,79,52,0.12),_transparent_30%)]" />
 
-          <div className="mx-auto grid w-full max-w-7xl gap-8 px-6 py-14 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
-            <section className="rounded-[34px] border border-[#ead8cc] bg-white p-8 shadow-[0_18px_45px_rgba(92,50,28,0.12)]">
+          <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-12 sm:px-6 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-8 lg:px-10">
+            <section className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_18px_45px_rgba(92,50,28,0.12)] sm:rounded-[34px] sm:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
                 Commander
               </p>
-              <h1 className="mt-4 font-serif text-5xl leading-[1.05] text-[#33251d]">
+              <h1 className="mt-4 font-serif text-4xl leading-[1.05] text-[#33251d] sm:text-5xl">
                 Faire une demande de commande
               </h1>
-              <p className="mt-5 text-base leading-8 text-[#6d5a50]">
+              <p className="mt-5 text-base leading-7 text-[#6d5a50] sm:leading-8">
                 Cette page est dediee a la commande client. La vitrine reste elegante, puis la
                 demande se fait ici de maniere simple, rassurante et lisible.
               </p>

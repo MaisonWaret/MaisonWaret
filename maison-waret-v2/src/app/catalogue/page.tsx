@@ -39,13 +39,13 @@ export default async function CataloguePage({
         <section className="relative">
           <div className="absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(circle_at_top_left,_rgba(212,162,136,0.24),_transparent_40%),radial-gradient(circle_at_top_right,_rgba(138,79,52,0.12),_transparent_30%),linear-gradient(180deg,#fff8f2_0%,#fffaf5_100%)]" />
 
-          <div className="mx-auto w-full max-w-7xl px-6 py-14 lg:px-10">
+          <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
             <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="rounded-[36px] border border-[#ead8cc] bg-white p-8 shadow-[0_18px_45px_rgba(92,50,28,0.12)]">
+              <div className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_18px_45px_rgba(92,50,28,0.12)] sm:rounded-[36px] sm:p-8">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
                   Catalogue complet
                 </p>
-                <h1 className="mt-4 font-serif text-5xl leading-[1.05] text-[#33251d]">
+                <h1 className="mt-4 font-serif text-4xl leading-[1.05] text-[#33251d] sm:text-5xl">
                   Toutes les douceurs proposees par Maison Waret, dans une presentation plus elegante.
                 </h1>
                 <p className="mt-5 max-w-3xl text-base leading-8 text-[#6d5a50]">
@@ -84,7 +84,7 @@ export default async function CataloguePage({
                 {premiumNotes.map((note, index) => (
                   <article
                     key={note}
-                    className={`rounded-[30px] border p-6 shadow-[0_16px_38px_rgba(92,50,28,0.08)] ${
+                    className={`rounded-[24px] border p-5 shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[30px] sm:p-6 ${
                       index === 0
                         ? "border-[#ead8cc] bg-[#fff3e8]"
                         : "border-[#ead8cc] bg-white"
@@ -101,13 +101,13 @@ export default async function CataloguePage({
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl px-6 pb-16 lg:px-10">
+        <section className="mx-auto w-full max-w-7xl px-4 pb-14 sm:px-6 sm:pb-16 lg:px-10">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
                 Produits
               </p>
-              <h2 className="mt-2 font-serif text-4xl text-[#33251d]">
+              <h2 className="mt-2 font-serif text-3xl text-[#33251d] sm:text-4xl">
                 {activeCategory ? activeCategory : "Toute la selection"}
               </h2>
             </div>
@@ -129,7 +129,7 @@ export default async function CataloguePage({
           </div>
 
           {visibleProducts.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {visibleProducts.map((product) => (
                 <StorefrontProductCard key={product.id} product={product} />
               ))}
@@ -140,13 +140,13 @@ export default async function CataloguePage({
             </div>
           )}
 
-          <div className="mt-12 rounded-[34px] bg-[#33251d] px-8 py-9 text-white shadow-[0_18px_45px_rgba(51,37,29,0.18)]">
+          <div className="mt-12 rounded-[28px] bg-[#33251d] px-6 py-8 text-white shadow-[0_18px_45px_rgba(51,37,29,0.18)] sm:rounded-[34px] sm:px-8 sm:py-9">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#f4cdb7]">
                   Commande sur mesure
                 </p>
-                <h3 className="mt-3 max-w-3xl font-serif text-4xl leading-tight">
+                <h3 className="mt-3 max-w-3xl font-serif text-3xl leading-tight sm:text-4xl">
                   Tu as trouve l&apos;inspiration ? La page commande prend ensuite le relais.
                 </h3>
               </div>

@@ -15,6 +15,7 @@ import {
   ADMIN_ORDER_STATUSES,
   type AdminClientReview,
   type AdminCreateInformationRequestInput,
+  formatAdminDate,
   formatAdminDateTime,
   formatAdminPrice,
   getAdminEventLabel,
@@ -33,6 +34,12 @@ const FALLBACK_REFRESH_INTERVAL_MS = 15000;
 const UNREAD_ORDERS_STORAGE_KEY = "maison-waret-admin-unread-orders";
 
 type LiveSyncState = "connecting" | "live" | "fallback";
+type OrderSortOption =
+  | "newest"
+  | "oldest"
+  | "requested_date"
+  | "highest_total"
+  | "latest_update";
 type AdminToast = {
   id: string;
   title: string;
@@ -205,6 +212,55 @@ function buildAnnualOverview(orders: AdminOrderRecord[]) {
   };
 }
 
+function getOrderDisplayTotal(order: AdminOrderRecord) {
+  return order.finalTotal ?? order.estimatedTotal ?? 0;
+}
+
+function normalizeSearchValue(value: string | null | undefined) {
+  return (value || "").toLowerCase().trim();
+}
+
+function orderMatchesSearch(order: AdminOrderRecord, search: string) {
+  const normalizedSearch = normalizeSearchValue(search);
+  if (!normalizedSearch) return true;
+
+  const searchableParts = [
+    order.orderNumber,
+    order.customerName,
+    order.customerEmail,
+    order.customerPhone,
+    order.deliveryAddress,
+    order.pickupNotes,
+    order.notes,
+    order.assignedToName,
+    ...order.items.map((item) => item.productName),
+    ...order.items.map((item) => item.category || ""),
+  ];
+
+  return searchableParts.some((value) => normalizeSearchValue(value).includes(normalizedSearch));
+}
+
+function sortOrders(orders: AdminOrderRecord[], sort: OrderSortOption) {
+  const sortedOrders = [...orders];
+
+  sortedOrders.sort((leftOrder, rightOrder) => {
+    switch (sort) {
+      case "oldest":
+        return leftOrder.createdAt.localeCompare(rightOrder.createdAt);
+      case "requested_date":
+        return leftOrder.requestedDate.localeCompare(rightOrder.requestedDate);
+      case "highest_total":
+        return getOrderDisplayTotal(rightOrder) - getOrderDisplayTotal(leftOrder);
+      case "latest_update":
+        return rightOrder.updatedAt.localeCompare(leftOrder.updatedAt);
+      default:
+        return rightOrder.createdAt.localeCompare(leftOrder.createdAt);
+    }
+  });
+
+  return sortedOrders;
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -232,6 +288,11 @@ export default function AdminPage() {
   const [toast, setToast] = useState<AdminToast | null>(null);
   const [unreadOrderIds, setUnreadOrderIds] = useState<string[]>(readStoredUnreadOrderIds);
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<AdminOrderStatus | "all">("all");
+  const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
+  const [deliveryModeFilter, setDeliveryModeFilter] = useState<"all" | "delivery" | "pickup">("all");
+  const [orderSort, setOrderSort] = useState<OrderSortOption>("newest");
   const [highlightedOrderId, setHighlightedOrderId] = useState<string | null>(null);
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
@@ -250,6 +311,47 @@ export default function AdminPage() {
   const unreadOrders = useMemo(
     () => orders.filter((order) => effectiveUnreadOrderIds.includes(order.id)),
     [effectiveUnreadOrderIds, orders],
+  );
+  const waitingInformationOrders = useMemo(
+    () =>
+      activeOrders.filter((order) =>
+        order.informationRequests.some((request) => request.status === "waiting"),
+      ),
+    [activeOrders],
+  );
+  const pendingReviewOrders = useMemo(
+    () =>
+      activeOrders.filter(
+        (order) => order.status === "pending" || order.status === "reviewing",
+      ),
+    [activeOrders],
+  );
+  const awaitingPaymentOrders = useMemo(
+    () => activeOrders.filter((order) => order.status === "awaiting_payment"),
+    [activeOrders],
+  );
+  const readyOrders = useMemo(
+    () => activeOrders.filter((order) => order.status === "ready"),
+    [activeOrders],
+  );
+  const unassignedOrders = useMemo(
+    () =>
+      activeOrders.filter(
+        (order) =>
+          !order.assignedToUserId &&
+          !["completed", "refused", "cancelled"].includes(order.status),
+      ),
+    [activeOrders],
+  );
+  const statusCounts = useMemo(
+    () =>
+      Object.fromEntries(
+        ADMIN_ORDER_STATUSES.map((status) => [
+          status,
+          activeOrders.filter((order) => order.status === status).length,
+        ]),
+      ) as Record<AdminOrderStatus, number>,
+    [activeOrders],
   );
   const reviewsByOrderId = useMemo(
     () =>
@@ -274,6 +376,88 @@ export default function AdminPage() {
         : archivedOrders,
     [archivedOrders, effectiveUnreadOrderIds, showUnreadOnly],
   );
+  const filteredActiveOrders = useMemo(() => {
+    const filteredOrders = visibleActiveOrders.filter((order) => {
+      if (statusFilter !== "all" && order.status !== statusFilter) return false;
+      if (deliveryModeFilter !== "all" && order.deliveryMode !== deliveryModeFilter) return false;
+      if (assigneeFilter === "unassigned" && order.assignedToUserId) return false;
+      if (assigneeFilter !== "all" && assigneeFilter !== "unassigned" && order.assignedToUserId !== assigneeFilter) {
+        return false;
+      }
+
+      return orderMatchesSearch(order, searchQuery);
+    });
+
+    return sortOrders(filteredOrders, orderSort);
+  }, [
+    assigneeFilter,
+    deliveryModeFilter,
+    orderSort,
+    searchQuery,
+    statusFilter,
+    visibleActiveOrders,
+  ]);
+  const filteredArchivedOrders = useMemo(() => {
+    const filteredOrders = visibleArchivedOrders.filter((order) => {
+      if (statusFilter !== "all" && order.status !== statusFilter) return false;
+      if (deliveryModeFilter !== "all" && order.deliveryMode !== deliveryModeFilter) return false;
+      if (assigneeFilter === "unassigned" && order.assignedToUserId) return false;
+      if (assigneeFilter !== "all" && assigneeFilter !== "unassigned" && order.assignedToUserId !== assigneeFilter) {
+        return false;
+      }
+
+      return orderMatchesSearch(order, searchQuery);
+    });
+
+    return sortOrders(filteredOrders, orderSort);
+  }, [
+    assigneeFilter,
+    deliveryModeFilter,
+    orderSort,
+    searchQuery,
+    statusFilter,
+    visibleArchivedOrders,
+  ]);
+  const orderAttentionGroups = useMemo(
+    () => [
+      {
+        key: "review",
+        label: "A traiter vite",
+        helper: "Commandes encore en attente de validation ou d'analyse.",
+        tone: "border-[#ead6c9] bg-[#fff8f4] text-[#8a4f34]",
+        orders: sortOrders(pendingReviewOrders, "requested_date").slice(0, 4),
+      },
+      {
+        key: "payment",
+        label: "Paiement a relancer",
+        helper: "Commandes acceptees mais encore en attente de paiement.",
+        tone: "border-[#efe0bf] bg-[#fff9ed] text-[#8b6822]",
+        orders: sortOrders(awaitingPaymentOrders, "latest_update").slice(0, 4),
+      },
+      {
+        key: "infos",
+        label: "Infos client en attente",
+        helper: "Des complements ont ete demandes et attendent un retour client.",
+        tone: "border-[#d8def2] bg-[#f6f7ff] text-[#4f5ca8]",
+        orders: sortOrders(waitingInformationOrders, "latest_update").slice(0, 4),
+      },
+    ],
+    [awaitingPaymentOrders, pendingReviewOrders, waitingInformationOrders],
+  );
+  const ownerAssignmentInsights = useMemo(() => {
+    const activeTeamMembers = users.filter((user) => user.active);
+
+    return activeTeamMembers
+      .map((user) => ({
+        id: user.id,
+        fullName: user.full_name,
+        roleLabel: getAppUserRoleLabel(user.role),
+        assignedOrders: activeOrders.filter((order) => order.assignedToUserId === user.id).length,
+      }))
+      .filter((user) => user.assignedOrders > 0)
+      .sort((leftUser, rightUser) => rightUser.assignedOrders - leftUser.assignedOrders)
+      .slice(0, 4);
+  }, [activeOrders, users]);
 
   const dashboardCards = useMemo(() => {
     const waitingInformationRequests = orders.reduce(
@@ -297,19 +481,27 @@ export default function AdminPage() {
         value: activeOrders.length,
       },
       {
-        label: "En analyse",
-        value: activeOrders.filter((order) => order.status === "reviewing").length,
+        label: "A valider",
+        value: pendingReviewOrders.length,
       },
       {
-        label: "Complements en attente",
+        label: "Paiement en attente",
+        value: awaitingPaymentOrders.length,
+      },
+      {
+        label: "Complements ouverts",
         value: waitingInformationRequests,
       },
       {
         label: "Reponses client",
         value: clientReplies,
       },
+      {
+        label: "Non assignees",
+        value: unassignedOrders.length,
+      },
     ];
-  }, [activeOrders, orders]);
+  }, [activeOrders.length, awaitingPaymentOrders.length, orders, pendingReviewOrders.length, unassignedOrders.length]);
 
   const liveSyncUi = useMemo(() => getLiveSyncUi(liveSyncState), [liveSyncState]);
 
@@ -1152,32 +1344,174 @@ export default function AdminPage() {
           </section>
         ) : null}
 
-        <section className="rounded-[24px] border border-white/70 bg-white/90 p-5 shadow-[0_18px_45px_rgba(91,54,35,0.08)]">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
+        <section className="rounded-[28px] border border-white/70 bg-white/90 p-6 shadow-[0_18px_45px_rgba(91,54,35,0.08)]">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+            <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4f34]">
-                Filtre rapide
+                Pilotage commandes
               </p>
-              <p className="mt-2 text-sm leading-6 text-[#5f4a40]">
-                Affiche uniquement les nouvelles commandes non lues si tu veux aller droit au plus
-                urgent.
+              <h2 className="mt-3 font-serif text-3xl text-[#2d1d17]">
+                Recherche, tri et vue rapide pour l&apos;equipe
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-[#5f4a40]">
+                Ce bloc permet d&apos;aller tout de suite sur une commande, de filtrer par statut,
+                assignation ou mode, puis d&apos;ordonner l&apos;affichage selon ce qui est le plus utile
+                pour l&apos;admin et l&apos;admin principal.
               </p>
             </div>
+            <div className="flex flex-wrap gap-3">
+              <button
+                className={`rounded-full border px-5 py-3 text-sm font-semibold transition hover:-translate-y-0.5 ${
+                  showUnreadOnly
+                    ? "border-[#2f7d55] bg-[#eef8f1] text-[#2f7d55]"
+                    : "border-[#ead6c9] bg-[#fff8f4] text-[#6f5b50]"
+                }`}
+                onClick={() => setShowUnreadOnly((value) => !value)}
+                type="button"
+              >
+                {showUnreadOnly ? "Afficher toutes les commandes" : "Afficher seulement les non lues"}
+              </button>
+              <button
+                className="rounded-full border border-[#ead6c9] bg-white px-5 py-3 text-sm font-semibold text-[#6f5b50] transition hover:-translate-y-0.5 hover:text-[#8a4f34]"
+                onClick={() => {
+                  setSearchQuery("");
+                  setStatusFilter("all");
+                  setAssigneeFilter("all");
+                  setDeliveryModeFilter("all");
+                  setOrderSort("newest");
+                  setShowUnreadOnly(false);
+                }}
+                type="button"
+              >
+                Reinitialiser les filtres
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-[1.5fr_repeat(4,minmax(0,1fr))]">
+            <label className="grid gap-2 text-sm text-[#5f4a40]">
+              <span className="font-medium text-[#31231d]">Recherche</span>
+              <input
+                className="rounded-2xl border border-[#ead6c9] bg-[#fffaf7] px-4 py-3 outline-none focus:border-[#8a4f34]"
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Client, numero, telephone, produit..."
+                type="text"
+                value={searchQuery}
+              />
+            </label>
+
+            <label className="grid gap-2 text-sm text-[#5f4a40]">
+              <span className="font-medium text-[#31231d]">Statut</span>
+              <select
+                className="rounded-2xl border border-[#ead6c9] bg-[#fffaf7] px-4 py-3 outline-none focus:border-[#8a4f34]"
+                onChange={(event) => setStatusFilter(event.target.value as AdminOrderStatus | "all")}
+                value={statusFilter}
+              >
+                <option value="all">Tous les statuts</option>
+                {ADMIN_ORDER_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {getAdminOrderStatusLabel(status)}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="grid gap-2 text-sm text-[#5f4a40]">
+              <span className="font-medium text-[#31231d]">Assignation</span>
+              <select
+                className="rounded-2xl border border-[#ead6c9] bg-[#fffaf7] px-4 py-3 outline-none focus:border-[#8a4f34]"
+                onChange={(event) => setAssigneeFilter(event.target.value)}
+                value={assigneeFilter}
+              >
+                <option value="all">Toute l&apos;equipe</option>
+                <option value="unassigned">Non assignees</option>
+                {users
+                  .filter((user) => user.active)
+                  .map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.full_name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+
+            <label className="grid gap-2 text-sm text-[#5f4a40]">
+              <span className="font-medium text-[#31231d]">Mode</span>
+              <select
+                className="rounded-2xl border border-[#ead6c9] bg-[#fffaf7] px-4 py-3 outline-none focus:border-[#8a4f34]"
+                onChange={(event) =>
+                  setDeliveryModeFilter(event.target.value as "all" | "delivery" | "pickup")
+                }
+                value={deliveryModeFilter}
+              >
+                <option value="all">Tous les modes</option>
+                <option value="delivery">Livraison</option>
+                <option value="pickup">Retrait</option>
+              </select>
+            </label>
+
+            <label className="grid gap-2 text-sm text-[#5f4a40]">
+              <span className="font-medium text-[#31231d]">Tri</span>
+              <select
+                className="rounded-2xl border border-[#ead6c9] bg-[#fffaf7] px-4 py-3 outline-none focus:border-[#8a4f34]"
+                onChange={(event) => setOrderSort(event.target.value as OrderSortOption)}
+                value={orderSort}
+              >
+                <option value="newest">Plus recentes d&apos;abord</option>
+                <option value="latest_update">Dernieres maj</option>
+                <option value="requested_date">Date demandee</option>
+                <option value="highest_total">Montant le plus eleve</option>
+                <option value="oldest">Plus anciennes d&apos;abord</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <span className="rounded-full bg-[#fff8f4] px-4 py-2 text-sm font-semibold text-[#6f5b50]">
+              {filteredActiveOrders.length} commande{filteredActiveOrders.length > 1 ? "s" : ""} active
+              {filteredActiveOrders.length > 1 ? "s" : ""} visible{filteredActiveOrders.length > 1 ? "s" : ""}
+            </span>
+            <span className="rounded-full bg-[#fff8f4] px-4 py-2 text-sm font-semibold text-[#6f5b50]">
+              {filteredArchivedOrders.length} archive{filteredArchivedOrders.length > 1 ? "s" : ""} visible
+              {filteredArchivedOrders.length > 1 ? "s" : ""}
+            </span>
+            {searchQuery ? (
+              <span className="rounded-full bg-[#eef8f1] px-4 py-2 text-sm font-semibold text-[#2f7d55]">
+                Recherche active: {searchQuery}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-2">
             <button
-              className={`rounded-full border px-5 py-3 text-sm font-semibold transition hover:-translate-y-0.5 ${
-                showUnreadOnly
-                  ? "border-[#2f7d55] bg-[#eef8f1] text-[#2f7d55]"
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                statusFilter === "all"
+                  ? "border-[#8a4f34] bg-[#8a4f34] text-white"
                   : "border-[#ead6c9] bg-[#fff8f4] text-[#6f5b50]"
               }`}
-              onClick={() => setShowUnreadOnly((value) => !value)}
+              onClick={() => setStatusFilter("all")}
               type="button"
             >
-              {showUnreadOnly ? "Afficher toutes les commandes" : "Afficher seulement les non lues"}
+              Tous ({activeOrders.length})
             </button>
+            {ADMIN_ORDER_STATUSES.map((status) => (
+              <button
+                key={status}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                  statusFilter === status
+                    ? "border-[#8a4f34] bg-[#8a4f34] text-white"
+                    : "border-[#ead6c9] bg-[#fff8f4] text-[#6f5b50]"
+                }`}
+                onClick={() => setStatusFilter(status)}
+                type="button"
+              >
+                {getAdminOrderStatusLabel(status)} ({statusCounts[status]})
+              </button>
+            ))}
           </div>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
           {dashboardCards.map((card) => (
             <article
               key={card.label}
@@ -1189,6 +1523,146 @@ export default function AdminPage() {
               <p className="mt-4 font-serif text-4xl text-[#2d1d17]">{card.value}</p>
             </article>
           ))}
+        </section>
+
+        <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+          <article className="rounded-[30px] border border-white/70 bg-white/90 p-6 shadow-[0_18px_45px_rgba(91,54,35,0.1)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4f34]">
+              Vue prioritaire
+            </p>
+            <h2 className="mt-3 font-serif text-3xl text-[#2d1d17]">
+              Les commandes qui demandent une action rapide
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-[#6f5b50]">
+              Cette vue remonte tout de suite les dossiers qui doivent etre traites rapidement
+              sans obliger a parcourir tout le dashboard.
+            </p>
+
+            <div className="mt-6 grid gap-4 lg:grid-cols-3">
+              {orderAttentionGroups.map((group) => (
+                <div
+                  key={group.key}
+                  className={`rounded-[24px] border p-5 ${group.tone}`}
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em]">
+                    {group.label}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 opacity-90">{group.helper}</p>
+                  <div className="mt-4 grid gap-3">
+                    {group.orders.length === 0 ? (
+                      <div className="rounded-[18px] border border-current/20 bg-white/70 px-4 py-4 text-sm">
+                        Rien d&apos;urgent ici pour le moment.
+                      </div>
+                    ) : null}
+                    {group.orders.map((order) => (
+                      <div
+                        key={order.id}
+                        className="rounded-[18px] border border-current/15 bg-white/80 px-4 py-4"
+                      >
+                        <p className="text-sm font-semibold text-[#2d1d17]">
+                          {order.orderNumber} · {order.customerName}
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-[#5f4a40]">
+                          {getAdminOrderStatusLabel(order.status)} · {formatAdminDate(order.requestedDate)}
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <button
+                            className="rounded-full border border-current/20 bg-white px-4 py-2 text-xs font-semibold"
+                            onClick={() => handleFocusOrder(order.id)}
+                            type="button"
+                          >
+                            Ouvrir
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="rounded-[30px] border border-white/70 bg-white/90 p-6 shadow-[0_18px_45px_rgba(91,54,35,0.1)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4f34]">
+              Execution equipe
+            </p>
+            <h2 className="mt-3 font-serif text-3xl text-[#2d1d17]">
+              Pretes, non assignees et charge visible
+            </h2>
+
+            <div className="mt-6 grid gap-4">
+              <div className="rounded-[22px] border border-[#efddd2] bg-[#fffaf7] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8a4f34]">
+                  Commandes pretes
+                </p>
+                <p className="mt-2 text-sm leading-6 text-[#6f5b50]">
+                  {readyOrders.length} commande{readyOrders.length > 1 ? "s" : ""} en statut prete.
+                </p>
+                <div className="mt-4 grid gap-3">
+                  {readyOrders.slice(0, 4).map((order) => (
+                    <button
+                      key={order.id}
+                      className="rounded-[18px] border border-[#ead6c9] bg-white px-4 py-3 text-left transition hover:-translate-y-0.5"
+                      onClick={() => handleFocusOrder(order.id)}
+                      type="button"
+                    >
+                      <p className="text-sm font-semibold text-[#2d1d17]">
+                        {order.orderNumber} · {order.customerName}
+                      </p>
+                      <p className="mt-1 text-sm text-[#6f5b50]">
+                        {formatAdminPrice(order.finalTotal ?? order.estimatedTotal)}
+                      </p>
+                    </button>
+                  ))}
+                  {readyOrders.length === 0 ? (
+                    <div className="rounded-[18px] border border-dashed border-[#dcc3b5] px-4 py-4 text-sm text-[#8f786c]">
+                      Aucune commande prete actuellement.
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="rounded-[22px] border border-[#efddd2] bg-[#fffaf7] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8a4f34]">
+                  Repartition visible
+                </p>
+                <div className="mt-4 grid gap-3">
+                  <div className="rounded-[18px] bg-white px-4 py-4">
+                    <p className="text-sm font-semibold text-[#2d1d17]">
+                      {unassignedOrders.length} commande{unassignedOrders.length > 1 ? "s" : ""} non assignee
+                      {unassignedOrders.length > 1 ? "s" : ""}
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-[#6f5b50]">
+                      Ideal pour l&apos;admin principal si tu veux redistribuer rapidement la charge.
+                    </p>
+                  </div>
+
+                  {canManageAppUsers(currentUser.role) ? (
+                    ownerAssignmentInsights.length > 0 ? (
+                      ownerAssignmentInsights.map((member) => (
+                        <div key={member.id} className="rounded-[18px] bg-white px-4 py-4">
+                          <p className="text-sm font-semibold text-[#2d1d17]">{member.fullName}</p>
+                          <p className="mt-1 text-sm text-[#8a4f34]">{member.roleLabel}</p>
+                          <p className="mt-2 text-sm leading-6 text-[#6f5b50]">
+                            {member.assignedOrders} commande{member.assignedOrders > 1 ? "s" : ""} assignee
+                            {member.assignedOrders > 1 ? "es" : "e"} actuellement.
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="rounded-[18px] border border-dashed border-[#dcc3b5] px-4 py-4 text-sm text-[#8f786c]">
+                        Aucune charge assignee a l&apos;equipe pour le moment.
+                      </div>
+                    )
+                  ) : (
+                    <div className="rounded-[18px] bg-white px-4 py-4 text-sm leading-6 text-[#6f5b50]">
+                      La lecture de la charge equipe detaillee reste surtout utile a l&apos;admin principal.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </article>
         </section>
 
         <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
@@ -1674,12 +2148,30 @@ export default function AdminPage() {
         ) : null}
 
         <section className="grid gap-8">
-          {visibleActiveOrders.length === 0 && showUnreadOnly ? (
+          <div className="flex flex-col gap-3 rounded-[28px] border border-white/70 bg-white/90 px-6 py-5 shadow-[0_18px_45px_rgba(91,54,35,0.08)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4f34]">
+              Tableau principal
+            </p>
+            <h2 className="font-serif text-3xl text-[#2d1d17]">
+              Commandes a traiter dans le dashboard
+            </h2>
+            <p className="text-sm leading-7 text-[#6f5b50]">
+              La liste ci-dessous suit maintenant la recherche, les filtres, le tri et le mode non
+              lu pour aider l&apos;equipe a travailler plus vite.
+            </p>
+          </div>
+
+          {filteredActiveOrders.length === 0 && showUnreadOnly ? (
             <article className="rounded-[28px] border border-dashed border-[#dcc3b5] bg-white/80 px-6 py-8 text-sm text-[#8f786c]">
               Aucune commande non lue dans le tableau principal pour le moment.
             </article>
           ) : null}
-          {visibleActiveOrders.map((order) => (
+          {filteredActiveOrders.length === 0 && !showUnreadOnly ? (
+            <article className="rounded-[28px] border border-dashed border-[#dcc3b5] bg-white/80 px-6 py-8 text-sm text-[#8f786c]">
+              Aucune commande active ne correspond aux filtres actuels.
+            </article>
+          ) : null}
+          {filteredActiveOrders.map((order) => (
             <OrderCard
               key={`${order.id}-${order.updatedAt}`}
               canPrepareReview={canManageAppUsers(currentUser.role) && reviewsFeatureEnabled}
@@ -1697,7 +2189,7 @@ export default function AdminPage() {
           ))}
         </section>
 
-        {visibleArchivedOrders.length > 0 ? (
+        {filteredArchivedOrders.length > 0 ? (
           <section className="rounded-[30px] border border-white/70 bg-white/90 p-6 shadow-[0_18px_45px_rgba(91,54,35,0.1)]">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4f34]">
               Archives
@@ -1706,7 +2198,7 @@ export default function AdminPage() {
               Commandes sorties du tableau principal
             </h2>
             <div className="mt-6 grid gap-8">
-              {visibleArchivedOrders.map((order) => (
+              {filteredArchivedOrders.map((order) => (
                 <OrderCard
                   key={`${order.id}-${order.updatedAt}`}
                   canPrepareReview={canManageAppUsers(currentUser.role) && reviewsFeatureEnabled}

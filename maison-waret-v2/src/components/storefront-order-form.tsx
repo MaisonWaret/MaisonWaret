@@ -252,13 +252,13 @@ export function StorefrontOrderForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-[32px] border border-[#efddd2] bg-[#fffaf7] p-6 shadow-[0_18px_40px_rgba(91,54,35,0.08)]"
+      className="rounded-[28px] border border-[#efddd2] bg-[#fffaf7] p-4 shadow-[0_18px_40px_rgba(91,54,35,0.08)] sm:rounded-[32px] sm:p-6"
     >
       <div className="flex flex-col gap-2">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8a4f34]">
           Formulaire
         </p>
-        <h3 className="font-serif text-3xl text-[#2d1d17]">Faire une demande de commande</h3>
+        <h3 className="font-serif text-2xl text-[#2d1d17] sm:text-3xl">Faire une demande de commande</h3>
         <p className="text-sm leading-6 text-[#6f5b50]">
           Remplis les informations utiles, choisis tes produits et envoie ta demande. Maison
           Waret te recontacte ensuite apres validation.
@@ -461,12 +461,12 @@ export function StorefrontOrderForm({
         </div>
       )}
 
-      <div className="mt-8 rounded-[24px] border border-[#ead8cd] bg-white p-5">
+      <div className="mt-8 rounded-[24px] border border-[#ead8cd] bg-white p-4 sm:p-5">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4f34]">
           Que la Maison Waret peut vous proposer
         </p>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <h4 className="font-serif text-2xl text-[#2d1d17]">Un petit truc en plus ?</h4>
+          <h4 className="font-serif text-xl text-[#2d1d17] sm:text-2xl">Un petit truc en plus ?</h4>
           <p className="text-sm text-[#6f5b50]">
             Ajoute en un clic quelques douceurs qui font envie.
           </p>
@@ -496,7 +496,7 @@ export function StorefrontOrderForm({
                   </div>
                   <h5 className="mt-3 font-serif text-xl text-[#2d1d17]">{product.name}</h5>
                   <p className="mt-2 text-sm leading-6 text-[#6f5b50]">{product.description}</p>
-                  <div className="mt-4 flex items-center justify-between gap-3">
+                  <div className="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm font-semibold text-[#2d1d17]">
                       A partir de {formatCurrency(product.priceFrom)}
                     </p>
@@ -520,8 +520,8 @@ export function StorefrontOrderForm({
       </div>
 
       <div className="mt-8">
-        <div className="flex items-center justify-between gap-3">
-          <h4 className="font-serif text-2xl text-[#2d1d17]">Ta selection</h4>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h4 className="font-serif text-xl text-[#2d1d17] sm:text-2xl">Ta selection</h4>
           <p className="text-sm text-[#6f5b50]">
             La liste affiche seulement les produits que tu as choisis.
           </p>
@@ -532,7 +532,7 @@ export function StorefrontOrderForm({
             {selectedProducts.map((product) => (
               <div
                 key={product.id}
-                className="grid gap-3 rounded-[24px] border border-[#ead8cd] bg-white px-4 py-4 md:grid-cols-[1fr_160px]"
+                className="grid gap-4 rounded-[24px] border border-[#ead8cd] bg-white px-4 py-4 md:grid-cols-[1fr_160px]"
               >
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
@@ -543,7 +543,7 @@ export function StorefrontOrderForm({
                       A partir de {formatCurrency(product.priceFrom)}
                     </p>
                   </div>
-                  <h5 className="mt-3 font-serif text-xl text-[#2d1d17]">{product.name}</h5>
+                  <h5 className="mt-3 font-serif text-lg text-[#2d1d17] sm:text-xl">{product.name}</h5>
                   <p className="mt-2 text-sm leading-6 text-[#6f5b50]">{product.description}</p>
                   <button
                     type="button"
@@ -602,9 +602,9 @@ export function StorefrontOrderForm({
         </label>
       </div>
 
-      <div className="mt-8 rounded-[24px] border border-[#ead8cd] bg-white p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h4 className="font-serif text-2xl text-[#2d1d17]">Resume</h4>
+      <div className="mt-8 rounded-[24px] border border-[#ead8cd] bg-white p-4 sm:p-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <h4 className="font-serif text-xl text-[#2d1d17] sm:text-2xl">Resume</h4>
           <p className="text-sm text-[#6f5b50]">
             {selectedItems.length > 0
               ? `${selectedItems.length} produit(s) selectionne(s)`
