@@ -147,6 +147,28 @@ create table if not exists public.notification_logs (
     created_at timestamptz not null default now()
 );
 
+create table if not exists public.customer_reviews (
+    id uuid primary key default gen_random_uuid(),
+    order_id uuid references public.orders (id) on delete set null,
+    author_name text not null,
+    city text,
+    title text,
+    message text not null,
+    occasion text,
+    rating integer not null default 5 check (rating between 1 and 5),
+    visible boolean not null default true,
+    sort_order integer not null default 0,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+
+alter table public.customer_reviews
+add column if not exists order_id uuid references public.orders (id) on delete set null;
+
+create unique index if not exists customer_reviews_order_id_unique
+on public.customer_reviews (order_id)
+where order_id is not null;
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -212,6 +234,12 @@ execute function public.set_updated_at();
 drop trigger if exists trg_order_information_requests_updated_at on public.order_information_requests;
 create trigger trg_order_information_requests_updated_at
 before update on public.order_information_requests
+for each row
+execute function public.set_updated_at();
+
+drop trigger if exists trg_customer_reviews_updated_at on public.customer_reviews;
+create trigger trg_customer_reviews_updated_at
+before update on public.customer_reviews
 for each row
 execute function public.set_updated_at();
 

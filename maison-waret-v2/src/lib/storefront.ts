@@ -25,6 +25,22 @@ export type StorefrontData = {
   deliveryZones: DeliveryZoneOption[];
 };
 
+export const LOCAL_DELIVERY_AREA = {
+  town: "Baron",
+  postalCode: "60300",
+  county: "Oise",
+  radiusKm: 15,
+};
+
+const DEFAULT_LOCAL_DELIVERY_ZONE: DeliveryZoneOption = {
+  id: "local-baron-radius",
+  label: `Rayon ${LOCAL_DELIVERY_AREA.radiusKm} km autour de ${LOCAL_DELIVERY_AREA.town} (${LOCAL_DELIVERY_AREA.postalCode})`,
+  city: LOCAL_DELIVERY_AREA.town,
+  postalCode: LOCAL_DELIVERY_AREA.postalCode,
+  deliveryFee: 0,
+  minimumOrderAmount: null,
+};
+
 function mapFallbackProducts(): StorefrontProduct[] {
   return fallbackProducts.map((product) => ({
     id: product.id,
@@ -73,14 +89,16 @@ export async function getStorefrontData(): Promise<StorefrontData> {
           }))
         : mapFallbackProducts(),
     deliveryZones:
-      zoneRows?.map((zone) => ({
-        id: zone.id,
-        label: zone.label,
-        city: zone.city,
-        postalCode: zone.postal_code,
-        deliveryFee: Number(zone.delivery_fee || 0),
-        minimumOrderAmount: zone.minimum_order_amount,
-      })) || [],
+      zoneRows && zoneRows.length > 0
+        ? zoneRows.map((zone) => ({
+            id: zone.id,
+            label: zone.label,
+            city: zone.city,
+            postalCode: zone.postal_code,
+            deliveryFee: Number(zone.delivery_fee || 0),
+            minimumOrderAmount: zone.minimum_order_amount,
+          }))
+        : [DEFAULT_LOCAL_DELIVERY_ZONE],
   };
 }
 
@@ -129,6 +147,14 @@ export function getProductTheme(product: StorefrontProduct) {
       "bg-[linear-gradient(135deg,rgba(203,176,130,0.95),rgba(126,103,72,0.95))]",
     chipClass: "bg-[#efe7d7] text-[#7d5a2f]",
   };
+}
+
+export function getDeliveryCoverageLabel() {
+  return `Livraison dans un rayon de ${LOCAL_DELIVERY_AREA.radiusKm} km autour de ${LOCAL_DELIVERY_AREA.town} (${LOCAL_DELIVERY_AREA.county})`;
+}
+
+export function getDeliveryCoverageShortLabel() {
+  return `${LOCAL_DELIVERY_AREA.radiusKm} km autour de ${LOCAL_DELIVERY_AREA.town}`;
 }
 
 function pickHomepageSectionProducts(

@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import {
+  buildOrderSubmittedNotifications,
+  recordNotificationBatch,
+  type OrderNotificationOrderLike,
+} from "@/lib/order-notifications";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getStorefrontData, type StorefrontProduct } from "@/lib/storefront";
 
@@ -222,6 +227,43 @@ export async function POST(request: Request) {
       delivery_mode: parsed.data.deliveryMode,
       items_count: resolvedItems.length,
       requested_date: parsed.data.requestedDate,
+    },
+  });
+
+  const notificationOrder: OrderNotificationOrderLike = {
+    id: orderRow.id,
+    orderNumber: orderRow.order_number,
+    customerName: parsed.data.customerName,
+    customerEmail: parsed.data.customerEmail,
+    customerPhone: parsed.data.customerPhone,
+    deliveryMode: parsed.data.deliveryMode,
+    deliveryAddress:
+      parsed.data.deliveryMode === "delivery"
+        ? normalizeOptionalText(parsed.data.deliveryAddress)
+        : null,
+    pickupNotes:
+      parsed.data.deliveryMode === "pickup" ? normalizeOptionalText(parsed.data.pickupNotes) : null,
+    requestedDate: parsed.data.requestedDate,
+    requestedTimeSlot: normalizeOptionalText(parsed.data.requestedTimeSlot),
+    status: "pending",
+    estimatedTotal,
+    finalTotal: null,
+    refusalReason: null,
+    paymentLink: null,
+    paymentDeadline: null,
+  };
+
+  await recordNotificationBatch({
+    admin,
+    orderId: orderRow.id,
+    actor: {
+      userId: null,
+      name: parsed.data.customerName,
+    },
+    trigger: "order_created",
+    notifications: buildOrderSubmittedNotifications(notificationOrder),
+    metadata: {
+      order_number: orderRow.order_number,
     },
   });
 

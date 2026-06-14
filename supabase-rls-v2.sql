@@ -7,6 +7,7 @@ alter table public.order_events enable row level security;
 alter table public.order_information_requests enable row level security;
 alter table public.order_information_replies enable row level security;
 alter table public.notification_logs enable row level security;
+alter table public.customer_reviews enable row level security;
 
 drop policy if exists "public can read visible products" on public.products;
 create policy "public can read visible products"
@@ -136,6 +137,28 @@ on public.notification_logs
 for insert
 to authenticated
 with check (public.is_active_staff());
+
+drop policy if exists "public can read visible customer reviews" on public.customer_reviews;
+create policy "public can read visible customer reviews"
+on public.customer_reviews
+for select
+to anon, authenticated
+using (visible = true);
+
+drop policy if exists "staff can read customer reviews" on public.customer_reviews;
+create policy "staff can read customer reviews"
+on public.customer_reviews
+for select
+to authenticated
+using (public.is_active_staff());
+
+drop policy if exists "owner can manage customer reviews" on public.customer_reviews;
+create policy "owner can manage customer reviews"
+on public.customer_reviews
+for all
+to authenticated
+using (public.is_owner_staff())
+with check (public.is_owner_staff());
 
 -- Important :
 -- pour le site public, je recommande de passer par une API serveur ou une Edge Function

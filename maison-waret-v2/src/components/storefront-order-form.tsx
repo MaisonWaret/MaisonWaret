@@ -5,6 +5,7 @@ import { type FormEvent, useMemo, useState } from "react";
 import {
   getProductTheme,
   formatCurrency,
+  getDeliveryCoverageLabel,
   type DeliveryZoneOption,
   type StorefrontProduct,
 } from "@/lib/storefront";
@@ -390,7 +391,9 @@ export function StorefrontOrderForm({
             <p className="text-xs text-[#8a4f34]">
               La livraison n&apos;est pas disponible pour le moment.
             </p>
-          ) : null}
+          ) : (
+            <p className="text-xs text-[#8a4f34]">{getDeliveryCoverageLabel()}.</p>
+          )}
         </div>
       </div>
 
@@ -416,6 +419,9 @@ export function StorefrontOrderForm({
                 </option>
               ))}
             </select>
+            <span className="text-xs text-[#8a4f34]">
+              La livraison reste locale pour garder un service clair et qualitatif.
+            </span>
           </label>
 
           <label className="flex flex-col gap-2 text-sm text-[#5f4b40] md:col-span-2">

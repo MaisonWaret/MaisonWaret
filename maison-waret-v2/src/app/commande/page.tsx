@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PublicSiteFooter } from "@/components/public-site-footer";
 import { PublicSiteHeader } from "@/components/public-site-header";
 import { StorefrontOrderForm } from "@/components/storefront-order-form";
-import { getStorefrontData } from "@/lib/storefront";
+import { getDeliveryCoverageLabel, getStorefrontData } from "@/lib/storefront";
 
 export default async function CommandePage() {
   const { products, deliveryZones } = await getStorefrontData();
@@ -25,8 +25,8 @@ export default async function CommandePage() {
                 Faire une demande de commande
               </h1>
               <p className="mt-5 text-base leading-8 text-[#6d5a50]">
-                Cette page est dediee a la commande client. La vitrine reste separee, plus
-                elegante et plus lisible, puis la demande se fait ici tranquillement.
+                Cette page est dediee a la commande client. La vitrine reste elegante, puis la
+                demande se fait ici de maniere simple, rassurante et lisible.
               </p>
 
               <div className="mt-8 grid gap-4">
@@ -35,7 +35,7 @@ export default async function CommandePage() {
                   "La demande est validee manuellement avant confirmation.",
                   "Le prix final peut etre ajuste selon les precisions demandees.",
                   deliveryZones.length > 0
-                    ? `${deliveryZones.length} zone(s) de livraison sont actuellement proposees.`
+                    ? getDeliveryCoverageLabel()
                     : "Le retrait est disponible en priorite pour le moment.",
                 ].map((item) => (
                   <div
@@ -53,7 +53,7 @@ export default async function CommandePage() {
                 </p>
                 <div className="mt-4 space-y-3 text-sm leading-7 text-[#6d5a50]">
                   <p>1. Choisis tes produits et quantites.</p>
-                  <p>2. Ajoute la date, le retrait ou la livraison et tes precisions.</p>
+                  <p>2. Ajoute la date, le retrait ou la livraison autour de Baron et tes precisions.</p>
                   <p>3. Envoie la demande, puis Maison Waret te recontacte ensuite.</p>
                 </div>
               </div>
