@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maison Waret - Patisserie artisanale</title>
+  <meta name="description" content="Commandez vos boxes de viennoiseries, gateaux et creations saisonnieres chez Maison Waret. Livraison locale sur demande.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#top">
+        <span class="brand-mark">MW</span>
+        <span>
+          <strong data-brand-name>Maison Waret</strong>
+          <small data-brand-subtitle>Patisserie artisanale</small>
+        </span>
+      </a>
+      <nav class="main-nav">
+        <a href="#catalogue">Catalogue</a>
+        <a href="#processus">Comment ca marche</a>
+        <a href="#commande">Commander</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow" data-hero-eyebrow>Commandes sur demande</p>
+          <h1 data-hero-title>Boxes de viennoiseries, gateaux et douceurs selon vos envies.</h1>
+          <p class="hero-text" data-hero-text>
+            Maison Waret vous propose une commande simple en ligne. Vous choisissez vos produits,
+            vous envoyez votre demande, puis je valide ou refuse selon les disponibilites, les delais et la livraison.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#commande">Faire une demande</a>
+            <a class="button button-secondary" href="#catalogue">Voir le catalogue</a>
+          </div>
+          <ul class="hero-points">
+            <li data-order-delivery>Livraison locale uniquement</li>
+            <li data-order-validation>Validation manuelle de chaque commande</li>
+            <li data-order-payment>Paiement apres acceptation</li>
+          </ul>
+        </div>
+        <div class="hero-card">
+          <h2>Infos rapides</h2>
+          <div class="info-list">
+            <div>
+              <span class="label">Zone</span>
+              <strong data-order-delivery-short>Livraison locale</strong>
+            </div>
+            <div>
+              <span class="label">Delai mini</span>
+              <strong data-order-delay>48h conseillees</strong>
+            </div>
+            <div>
+              <span class="label">Paiement</span>
+              <strong data-order-payment-short>Apres validation</strong>
+            </div>
+            <div>
+              <span class="label">Produits</span>
+              <strong data-order-products>Boxes, gateaux, saisonnier</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Maison Waret</p>
+          <h2>Une boutique en ligne pensee pour une patisserie artisanale.</h2>
+          <p>
+            Cette V1 est faite pour prendre des demandes de commande, mettre en avant vos produits
+            et vous laisser le dernier mot avant tout paiement.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Boxes de viennoiseries</h3>
+            <p>Formats prets a commander pour le petit-dejeuner, les brunchs et les cadeaux.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Gateaux sur demande</h3>
+            <p>Precisez le nombre de personnes, le parfum souhaite et vos consignes.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Offres saisonnieres</h3>
+            <p>Ajoutez facilement des nouveautes selon les fetes, la saison ou vos envies.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Validation manuelle</h3>
+            <p>Vous acceptez, refusez ou ajustez chaque commande avant confirmation.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="catalogue">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Catalogue</p>
+          <h2>Produits mis en avant</h2>
+          <p>Exemples de produits et categories. Tout cela est modifiable ensuite.</p>
+        </div>
+        <div class="product-grid" id="product-grid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="processus">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Comment ca marche</p>
+          <h2>Un systeme simple pour toi comme pour tes clients.</h2>
+        </div>
+        <div class="steps">
+          <article class="step-card">
+            <span class="step-number">1</span>
+            <h3>Le client envoie sa demande</h3>
+            <p>Il choisit ses produits, ajoute ses quantites et remplit le formulaire de commande.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">2</span>
+            <h3>Tu verifies la faisabilite</h3>
+            <p>Tu consultes la demande, les delais, la livraison locale et tes disponibilites.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">3</span>
+            <h3>Tu acceptes ou refuses</h3>
+            <p>Le client recoit ensuite une reponse et, plus tard, un paiement si la commande est validee.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="commande">
+      <div class="container order-layout">
+        <div class="order-panel">
+          <div class="section-heading left">
+            <p class="eyebrow">Votre panier</p>
+            <h2>Selectionnez vos produits</h2>
+          </div>
+          <div class="cart-list" id="cart-list"></div>
+          <div class="cart-summary">
+            <div>
+              <span>Total estime</span>
+              <strong id="cart-total">0,00 EUR</strong>
+            </div>
+            <p>Montant indicatif. Le prix final est confirme apres validation de la commande.</p>
+          </div>
+        </div>
+
+        <div class="order-panel">
+          <div class="section-heading left">
+            <p class="eyebrow">Formulaire</p>
+            <h2>Faire une demande de commande</h2>
+          </div>
+          <form id="order-form" class="order-form">
+            <div class="form-grid">
+              <label>
+                Nom complet
+                <input type="text" name="customerName" required>
+              </label>
+              <label>
+                Email
+                <input type="email" name="customerEmail" required>
+              </label>
+              <label>
+                Telephone
+                <input type="tel" name="customerPhone" required>
+              </label>
+              <label>
+                Date souhaitee
+                <input type="date" name="requestedDate" required>
+              </label>
+            </div>
+            <label>
+              Adresse de livraison
+              <input type="text" name="deliveryAddress" placeholder="Rue, ville, informations utiles" required>
+            </label>
+            <label>
+              Message ou demande speciale
+              <textarea name="notes" rows="5" placeholder="Parfum, nombre de personnes, decoration, allergies, informations complementaires..."></textarea>
+            </label>
+            <div class="order-note">
+              <strong>Important :</strong> la commande est une demande. Elle doit ensuite etre acceptee par Maison Waret.
+            </div>
+            <button class="button button-primary" type="submit">Envoyer ma demande</button>
+            <p class="form-feedback" id="form-feedback"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <strong data-brand-name>Maison Waret</strong>
+        <p data-footer-text>Patisserie artisanale, commandes locales et creations sur demande.</p>
+      </div>
+      <div>
+        <strong>A prevoir ensuite</strong>
+        <p>Mails automatiques, paiement apres validation, dashboard complet, gestion de saison et catalogue dynamique.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="site-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

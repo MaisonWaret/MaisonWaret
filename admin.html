@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maison Waret - Admin</title>
+  <meta name="description" content="Tableau de bord local de demonstration pour les commandes Maison Waret.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body">
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">MW</span>
+        <span>
+          <strong data-brand-name>Maison Waret</strong>
+          <small data-admin-subtitle>Dashboard commandes</small>
+        </span>
+      </a>
+      <nav class="main-nav">
+        <a href="login.html">Compte admin</a>
+        <a href="index.html">Retour au site</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="admin-topbar">
+        <div class="admin-userbox" id="admin-userbox"></div>
+        <button class="button button-secondary button-small" id="logout-button" type="button">Se deconnecter</button>
+      </div>
+      <div class="section-heading left">
+        <p class="eyebrow">Admin local</p>
+        <h1>Gestion des demandes de commande</h1>
+        <p>
+          Cette page sert de demonstration locale. Les donnees sont stockees dans le navigateur pour illustrer
+          le futur tableau de bord complet.
+        </p>
+      </div>
+
+      <p class="form-feedback" id="admin-feedback"></p>
+      <div class="admin-stats" id="admin-stats"></div>
+
+      <div class="admin-insights">
+        <section class="admin-panel">
+          <div class="section-heading left compact">
+            <p class="eyebrow">Vue annuelle</p>
+            <h2>Activite de l'annee</h2>
+          </div>
+          <div id="yearly-summary"></div>
+        </section>
+        <section class="admin-panel">
+          <div class="section-heading left compact">
+            <p class="eyebrow">Historique</p>
+            <h2>Dernieres actions</h2>
+          </div>
+          <div id="activity-log"></div>
+        </section>
+      </div>
+
+      <section class="admin-section">
+        <div class="section-heading left compact">
+          <p class="eyebrow">Commandes</p>
+          <h2>Demandes actives</h2>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Produits</th>
+                <th>Total estime</th>
+                <th>Suivi</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <div class="section-heading left compact">
+          <p class="eyebrow">Archives</p>
+          <h2>Anciennes commandes</h2>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Produits</th>
+                <th>Total estime</th>
+                <th>Suivi</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="archived-orders-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="admin-section" id="admin-users-section" hidden>
+        <div class="section-heading left compact">
+          <p class="eyebrow">Equipe</p>
+          <h2>Gestion des comptes</h2>
+          <p>Visible uniquement pour l'admin principal.</p>
+        </div>
+
+        <div class="admin-user-layout">
+          <section class="admin-panel">
+            <h3>Creer un compte employe</h3>
+            <form class="order-form" id="create-user-form">
+              <div class="form-grid">
+                <label>
+                  Nom
+                  <input type="text" name="name" required>
+                </label>
+                <label>
+                  Email
+                  <input type="email" name="email" required>
+                </label>
+                <label>
+                  Mot de passe
+                  <input type="password" name="password" minlength="6" required>
+                </label>
+                <label>
+                  Role
+                  <select name="role">
+                    <option value="manager">Manager</option>
+                    <option value="employee">Employe</option>
+                  </select>
+                </label>
+              </div>
+              <button class="button button-primary" type="submit">Creer le compte</button>
+            </form>
+          </section>
+
+          <section class="admin-panel">
+            <h3>Comptes existants</h3>
+            <div class="admin-table-wrapper">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Compte</th>
+                    <th>Role</th>
+                    <th>Etat</th>
+                    <th>Cree le</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="site-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

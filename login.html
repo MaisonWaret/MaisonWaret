@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maison Waret - Connexion admin</title>
+  <meta name="description" content="Connexion admin Maison Waret.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-body">
+  <main class="login-shell">
+    <section class="login-panel login-panel-brand">
+      <p class="eyebrow" data-private-label>Espace prive</p>
+      <h1 data-admin-login-name>Maison Waret admin</h1>
+      <p data-admin-login-description>
+        Cette page est separee du site client. Elle sert uniquement a la connexion du compte administrateur
+        pour consulter et gerer les commandes.
+      </p>
+      <ul class="hero-points">
+        <li>Connexion admin separee</li>
+        <li>Creation du premier compte possible</li>
+        <li>Acces prive au tableau de bord</li>
+      </ul>
+      <a class="button button-secondary" href="index.html">Retour au site public</a>
+    </section>
+
+    <section class="login-panel">
+      <div class="tab-row">
+        <button class="tab-button active" type="button" data-tab="login">Connexion</button>
+        <button class="tab-button" type="button" data-tab="register">Creer un compte</button>
+      </div>
+
+      <div class="tab-content active" id="login-tab">
+        <h2>Se connecter</h2>
+        <form id="login-form" class="order-form">
+          <label>
+            Email admin
+            <input type="email" name="email" required>
+          </label>
+          <label>
+            Mot de passe
+            <input type="password" name="password" required>
+          </label>
+          <button class="button button-primary" type="submit">Connexion</button>
+          <p class="form-feedback" id="login-feedback"></p>
+        </form>
+      </div>
+
+      <div class="tab-content" id="register-tab">
+        <h2>Creer le compte admin</h2>
+        <form id="register-form" class="order-form">
+          <label>
+            Nom admin
+            <input type="text" name="name" required>
+          </label>
+          <label>
+            Email admin
+            <input type="email" name="email" required>
+          </label>
+          <label>
+            Mot de passe
+            <input type="password" name="password" minlength="6" required>
+          </label>
+          <button class="button button-primary" type="submit">Creer le compte</button>
+          <p class="form-feedback" id="register-feedback"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="site-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
