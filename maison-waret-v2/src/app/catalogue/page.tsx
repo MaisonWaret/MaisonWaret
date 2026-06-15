@@ -26,8 +26,8 @@ export default async function CataloguePage({
     ? products.filter((product) => product.category === activeCategory)
     : products;
   const premiumNotes = [
-    "Une selection pensee pour donner envie avant meme la commande.",
-    "Des categories claires pour aller vite vers ce qui fait craquer.",
+    "Des selections claires: delices de voyage, gateaux au choix, tartes et box de tartelettes.",
+    "Une lecture simple pour guider vite vers la bonne envie gourmande.",
     getDeliveryCoverageLabel(),
   ];
 
@@ -46,11 +46,12 @@ export default async function CataloguePage({
                   Catalogue complet
                 </p>
                 <h1 className="mt-4 font-serif text-4xl leading-[1.05] text-[#33251d] sm:text-5xl">
-                  Toutes les douceurs proposees par Maison Waret, dans une presentation plus elegante.
+                  Le catalogue Maison Waret avec tes vraies selections, du voyage aux gateaux sur commande.
                 </h1>
                 <p className="mt-5 max-w-3xl text-base leading-8 text-[#6d5a50]">
-                  Le catalogue sert a faire monter l&apos;envie: visuels premium, categories claires,
-                  descriptions courtes mais gourmandes, puis un acces direct vers la commande.
+                  Le catalogue sert a faire monter l&apos;envie avec des categories bien separees:
+                  delices de voyage, gateaux au choix, nos tartes, nos box de tartelettes et les
+                  produits de saison a part.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -110,6 +111,10 @@ export default async function CataloguePage({
               <h2 className="mt-2 font-serif text-3xl text-[#33251d] sm:text-4xl">
                 {activeCategory ? activeCategory : "Toute la selection"}
               </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#6d5a50]">
+                Les produits a base de fraise, framboise, poire ou abricot indiquent clairement si
+                le fruit risque de ne pas etre de saison au moment de la commande.
+              </p>
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -147,14 +152,18 @@ export default async function CataloguePage({
                   Commande sur mesure
                 </p>
                 <h3 className="mt-3 max-w-3xl font-serif text-3xl leading-tight sm:text-4xl">
-                  Tu as trouve l&apos;inspiration ? La page commande prend ensuite le relais.
+                  Tu as trouve l&apos;inspiration ? Envoie ensuite une demande de devis personnalise.
                 </h3>
+                <p className="mt-4 max-w-3xl text-sm leading-7 text-white/75">
+                  Maison Waret confirme ensuite la faisabilite, le fruit de saison si besoin, puis
+                  le montant final avant paiement.
+                </p>
               </div>
               <Link
                 href="/commande"
                 className="rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#33251d] transition hover:-translate-y-0.5"
               >
-                Ouvrir la commande
+                Demander un devis
               </Link>
             </div>
           </div>

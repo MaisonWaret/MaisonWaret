@@ -205,8 +205,8 @@ export function StorefrontOrderForm({
 
       setSuccessMessage(
         payload?.orderNumber
-          ? `Demande envoyee avec succes. Numero: ${payload.orderNumber}`
-          : "Demande envoyee avec succes.",
+          ? `Demande de devis envoyee avec succes. Numero: ${payload.orderNumber}. Maison Waret revient vers toi avant paiement.`
+          : "Demande de devis envoyee avec succes. Maison Waret revient vers toi avant paiement.",
       );
       clearOrderSelection();
       setSelectedProductIds([]);
@@ -256,13 +256,26 @@ export function StorefrontOrderForm({
     >
       <div className="flex flex-col gap-2">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8a4f34]">
-          Formulaire
+          Devis
         </p>
-        <h3 className="font-serif text-2xl text-[#2d1d17] sm:text-3xl">Faire une demande de commande</h3>
+        <h3 className="font-serif text-2xl text-[#2d1d17] sm:text-3xl">
+          Envoyer une demande de devis
+        </h3>
         <p className="text-sm leading-6 text-[#6f5b50]">
           Remplis les informations utiles, choisis tes produits et envoie ta demande. Maison
-          Waret te recontacte ensuite apres validation.
+          Waret te recontacte ensuite avec un devis ou un montant final avant paiement.
         </p>
+      </div>
+
+      <div className="mt-6 rounded-[24px] border border-[#ead8cd] bg-white p-4 sm:p-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4f34]">
+          Paiement apres validation
+        </p>
+        <div className="mt-3 grid gap-3 text-sm leading-6 text-[#6f5b50]">
+          <p>1. Tu envoies ta demande de devis personnalise.</p>
+          <p>2. Maison Waret confirme les details et le montant final.</p>
+          <p>3. Tu paies uniquement si le devis te convient.</p>
+        </div>
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -614,7 +627,7 @@ export function StorefrontOrderForm({
 
         <div className="mt-4 space-y-2 text-sm leading-6 text-[#6f5b50]">
           <p>
-            Sous-total estime:{" "}
+            Sous-total indicatif:{" "}
             <span className="font-semibold text-[#2d1d17]">
               {pricingSummary.itemsSubtotal === null
                 ? "Sur devis"
@@ -628,7 +641,7 @@ export function StorefrontOrderForm({
             </span>
           </p>
           <p>
-            Total estime:{" "}
+            Estimation avant devis:{" "}
             <span className="font-semibold text-[#2d1d17]">
               {pricingSummary.estimatedTotal === null
                 ? "Sur devis"
@@ -637,10 +650,14 @@ export function StorefrontOrderForm({
           </p>
           {pricingSummary.hasCustomPrice ? (
             <p className="text-xs text-[#8a4f34]">
-              Certains produits sont sur devis, donc le total final sera confirme apres
-              validation.
+              Certains produits sont sur devis, donc le montant final sera confirme avant
+              paiement.
             </p>
           ) : null}
+          <p className="text-xs text-[#8a4f34]">
+            Aucun reglement n&apos;est demande a cette etape. Le paiement vient seulement apres
+            validation du devis par Maison Waret.
+          </p>
           {minimumOrderNotReached ? (
             <p className="text-xs text-[#8a4f34]">
               Le minimum pour cette zone est de{" "}
@@ -667,7 +684,7 @@ export function StorefrontOrderForm({
         disabled={submitting || minimumOrderNotReached}
         className="mt-6 inline-flex rounded-full bg-[#8a4f34] px-6 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#73422b] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {submitting ? "Envoi en cours..." : "Envoyer ma demande"}
+        {submitting ? "Envoi en cours..." : "Envoyer ma demande de devis"}
       </button>
     </form>
   );

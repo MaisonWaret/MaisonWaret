@@ -146,6 +146,8 @@ export type AdminOrderUpdateInput = {
   assignedTo?: string | null;
   archived?: boolean;
   finalTotal?: number | null;
+  paymentLink?: string | null;
+  paymentDeadline?: string | null;
   refusalReason?: string | null;
 };
 

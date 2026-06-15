@@ -61,6 +61,28 @@ function readNotificationText(payload: Record<string, unknown>, key: "subject" |
   return typeof value === "string" && value.trim() ? value : null;
 }
 
+function toDateTimeLocalValue(value: string | null) {
+  if (!value) return "";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const pad = (part: number) => String(part).padStart(2, "0");
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
+    date.getHours(),
+  )}:${pad(date.getMinutes())}`;
+}
+
+function fromDateTimeLocalValue(value: string) {
+  if (!value.trim()) return null;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return date.toISOString();
+}
+
 export function OrderCard({
   order,
   teamMembers,
@@ -79,6 +101,8 @@ export function OrderCard({
   const [finalTotal, setFinalTotal] = useState(
     order.finalTotal === null ? "" : String(order.finalTotal),
   );
+  const [paymentLink, setPaymentLink] = useState(order.paymentLink || "");
+  const [paymentDeadline, setPaymentDeadline] = useState(toDateTimeLocalValue(order.paymentDeadline));
   const [refusalReason, setRefusalReason] = useState(order.refusalReason || "");
   const [archived, setArchived] = useState(order.archived);
   const [preferredChannel, setPreferredChannel] = useState<"email" | "sms">("email");
@@ -106,8 +130,8 @@ export function OrderCard({
     estimatedTotal: order.estimatedTotal,
     finalTotal: finalTotal.trim() ? Number(finalTotal) : order.finalTotal,
     refusalReason: refusalReason.trim() || order.refusalReason,
-    paymentLink: order.paymentLink,
-    paymentDeadline: order.paymentDeadline,
+    paymentLink: paymentLink.trim() || null,
+    paymentDeadline: fromDateTimeLocalValue(paymentDeadline),
   });
 
   function getCurrentPayload(nextStatus?: AdminOrderStatus): AdminOrderUpdateInput {
@@ -118,6 +142,8 @@ export function OrderCard({
       assignedTo: assignedTo || null,
       archived,
       finalTotal: finalTotal.trim() ? Number(finalTotal) : null,
+      paymentLink: paymentLink.trim() || null,
+      paymentDeadline: fromDateTimeLocalValue(paymentDeadline),
       refusalReason: resolvedStatus === "refused" ? refusalReason.trim() || null : null,
     };
   }
@@ -129,6 +155,11 @@ export function OrderCard({
   async function handleQuickAction(nextStatus: AdminOrderStatus) {
     setStatus(nextStatus);
     await onSave(order.id, getCurrentPayload(nextStatus));
+  }
+
+  async function handleSendPaymentRequest() {
+    setStatus("awaiting_payment");
+    await onSave(order.id, getCurrentPayload("awaiting_payment"));
   }
 
   async function handleCreateRequest() {
@@ -193,7 +224,7 @@ export function OrderCard({
         </div>
         <div className="rounded-[22px] bg-[#fff7f2] px-5 py-4 text-right">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4f34]">
-            Total
+            Somme due
           </p>
           <p className="mt-2 text-2xl font-semibold text-[#31231d]">
             {formatAdminPrice(order.finalTotal ?? order.estimatedTotal)}
@@ -202,6 +233,16 @@ export function OrderCard({
             {order.finalTotal !== null ? "Valide" : "Estime"} ·{" "}
             {order.assignedToName ? `Assignee a ${order.assignedToName}` : "Non assignee"}
           </p>
+          {order.paymentLink ? (
+            <a
+              className="mt-3 inline-flex rounded-full border border-[#ead6c9] bg-white px-4 py-2 text-sm font-semibold text-[#8a4f34] transition hover:-translate-y-0.5"
+              href={order.paymentLink}
+              rel="noreferrer"
+              target="_blank"
+            >
+              Ouvrir le lien de paiement
+            </a>
+          ) : null}
           {canPrepareReview && onPrepareReview ? (
             <button
               className="mt-4 rounded-full border border-[#ead6c9] bg-white px-4 py-2 text-sm font-semibold text-[#6f5b50] transition hover:-translate-y-0.5 hover:text-[#8a4f34]"
@@ -236,8 +277,22 @@ export function OrderCard({
                 {action.label}
               </button>
             ))}
+            <button
+              className="rounded-full bg-[#8a4f34] px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#73422b] disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={saving || !paymentLink.trim() || !finalTotal.trim()}
+              onClick={() => void handleSendPaymentRequest()}
+              type="button"
+            >
+              Envoyer le lien de paiement
+            </button>
           </div>
         </div>
+        {!paymentLink.trim() || !finalTotal.trim() ? (
+          <p className="mt-4 text-sm text-[#8f786c]">
+            Renseigne la somme due et le lien de paiement pour envoyer la demande de reglement au
+            client.
+          </p>
+        ) : null}
       </section>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
@@ -553,7 +608,7 @@ export function OrderCard({
           </label>
 
           <label className="grid gap-2 text-sm text-[#5f4a40]">
-            <span className="font-medium text-[#31231d]">Total final</span>
+            <span className="font-medium text-[#31231d]">Somme due</span>
             <input
               className="rounded-2xl border border-[#ead6c9] bg-white px-4 py-3 outline-none focus:border-[#8a4f34]"
               inputMode="decimal"
@@ -561,6 +616,27 @@ export function OrderCard({
               placeholder="Laisser vide si non defini"
               type="number"
               value={finalTotal}
+            />
+          </label>
+
+          <label className="grid gap-2 text-sm text-[#5f4a40] md:col-span-2 xl:col-span-4">
+            <span className="font-medium text-[#31231d]">Lien de paiement</span>
+            <input
+              className="rounded-2xl border border-[#ead6c9] bg-white px-4 py-3 outline-none focus:border-[#8a4f34]"
+              onChange={(event) => setPaymentLink(event.target.value)}
+              placeholder="https://..."
+              type="url"
+              value={paymentLink}
+            />
+          </label>
+
+          <label className="grid gap-2 text-sm text-[#5f4a40] md:col-span-2 xl:col-span-2">
+            <span className="font-medium text-[#31231d]">Date limite de paiement</span>
+            <input
+              className="rounded-2xl border border-[#ead6c9] bg-white px-4 py-3 outline-none focus:border-[#8a4f34]"
+              onChange={(event) => setPaymentDeadline(event.target.value)}
+              type="datetime-local"
+              value={paymentDeadline}
             />
           </label>
 

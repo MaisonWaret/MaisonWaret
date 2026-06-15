@@ -219,18 +219,19 @@ export function buildOrderSubmittedNotifications(order: OrderNotificationOrderLi
   const emailBody = [
     `Bonjour ${order.customerName},`,
     "",
-    `Nous avons bien recu votre demande ${order.orderNumber} pour le ${requestedMoment}, ${deliveryLabel}.`,
-    `Montant actuel estime : ${totalLabel}.`,
+    `Nous avons bien recu votre demande de devis ${order.orderNumber} pour le ${requestedMoment}, ${deliveryLabel}.`,
+    `Montant actuel indicatif : ${totalLabel}.`,
     "",
-    "Notre equipe va maintenant verifier les details de votre commande avant de vous recontacter.",
+    "Notre equipe va maintenant verifier les details de votre demande avant de vous envoyer la suite.",
+    "Aucun paiement n'est demande a cette etape.",
     "",
     "Maison Waret",
   ].join("\n");
 
   const smsBody = [
-    `Maison Waret : commande ${order.orderNumber} bien recue.`,
+    `Maison Waret : demande de devis ${order.orderNumber} bien recue.`,
     `Date demandee : ${requestedMoment}.`,
-    "Nous revenons vers vous rapidement pour la suite.",
+    "Nous revenons vers vous rapidement avant tout paiement.",
   ].join(" ");
 
   return compact([
@@ -285,16 +286,16 @@ export function buildOrderStatusNotifications(order: OrderNotificationOrderLike)
       const emailBody = [
         `Bonjour ${order.customerName},`,
         "",
-        `Bonne nouvelle : votre commande ${order.orderNumber} a ete acceptee.`,
+        `Bonne nouvelle : votre demande ${order.orderNumber} a ete acceptee.`,
         `Date retenue : ${requestedMoment}, ${deliveryLabel}.`,
-        `Montant actuel : ${totalLabel}.`,
+        `Montant retenu : ${totalLabel}.`,
         "",
-        "Nous vous enverrons la suite des etapes tres bientot.",
+        "Nous vous enverrons la suite des etapes tres bientot pour finaliser votre accord.",
         "",
         "Maison Waret",
       ].join("\n");
 
-      const smsBody = `Maison Waret : bonne nouvelle, votre commande ${order.orderNumber} est acceptee. Montant actuel : ${totalLabel}.`;
+      const smsBody = `Maison Waret : bonne nouvelle, votre demande ${order.orderNumber} est acceptee. Montant retenu : ${totalLabel}.`;
 
       return compact([
         createEmailDraft(
@@ -310,13 +311,13 @@ export function buildOrderStatusNotifications(order: OrderNotificationOrderLike)
       const emailBody = [
         `Bonjour ${order.customerName},`,
         "",
-        `Votre commande ${order.orderNumber} est validee et attend maintenant votre paiement.`,
-        `Montant a regler : ${totalLabel}.`,
+        `Votre devis ${order.orderNumber} est valide et attend maintenant votre accord par paiement.`,
+        `Montant a regler si cela vous convient : ${totalLabel}.`,
         paymentDeadlineLabel,
         "",
         `Paiement : ${paymentLinkLabel}`,
         "",
-        "Dites-nous si vous avez besoin d'aide pour finaliser le reglement.",
+        "Dites-nous si vous avez besoin d'aide avant de finaliser le reglement.",
         "",
         "Maison Waret",
       ]
@@ -324,8 +325,8 @@ export function buildOrderStatusNotifications(order: OrderNotificationOrderLike)
         .join("\n");
 
       const smsBody = [
-        `Maison Waret : le paiement de la commande ${order.orderNumber} est attendu.`,
-        `Montant : ${totalLabel}.`,
+        `Maison Waret : votre devis ${order.orderNumber} est pret.`,
+        `Montant a regler si accord : ${totalLabel}.`,
         order.paymentLink ? `Lien : ${order.paymentLink}` : "Le lien arrive via l'equipe.",
       ].join(" ");
 

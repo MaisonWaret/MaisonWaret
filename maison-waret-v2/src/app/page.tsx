@@ -21,22 +21,22 @@ export default async function Home() {
     {
       id: "signature",
       eyebrow: "Produits signature",
-      title: "Des creations qui portent la patte Maison Waret",
+      title: "La box viennoiserie signature a mettre au centre de la home",
       products: signature,
     },
     {
       id: "seasonal",
       eyebrow: "Produits de saison",
-      title: "Les douceurs du moment qui donnent faim au premier regard",
+      title: "Les creations de saison a retrouver aussi sur une page dediee",
       products: seasonal,
     },
   ].filter((section) => section.products.length > 0);
   const serviceCards = [
     {
       label: "Fabrication artisanale",
-      title: "Des produits penses comme une belle attention",
+      title: "Une signature pensee pour faire envie des le premier regard",
       detail:
-        "Boxes de viennoiseries, douceurs a partager et creations sur commande avec une presentation soignee.",
+        "La box viennoiserie signature met en avant croissants bicolores, croissants et pains au chocolat dans un esprit maison et premium.",
     },
     {
       label: "Commande simple",
@@ -51,9 +51,9 @@ export default async function Home() {
     },
   ];
   const heroHighlights = [
-    "Boxes de viennoiseries et douceurs signature",
-    "Retrait ou livraison locale sur validation",
-    "Commande simple, claire et sans compte client",
+    "Box viennoiserie signature avec croissants bicolores, croissants et pains au chocolat",
+    "Produits de saison visibles sur une page dediee",
+    "Demande de devis simple avant validation et paiement",
   ];
   const trustPoints = [
     "Validation manuelle avant toute confirmation",
@@ -63,7 +63,7 @@ export default async function Home() {
   const occasionCards = [
     {
       title: "Petit-dejeuner gourmand",
-      text: "Des boxes pretes a faire plaisir pour les matins d'exception, les week-ends ou les reunions d'equipe.",
+      text: "La box viennoiserie signature trouve naturellement sa place pour les matins d'exception, les week-ends ou les reunions d'equipe.",
     },
     {
       title: "Anniversaire ou celebration",
@@ -71,7 +71,7 @@ export default async function Home() {
     },
     {
       title: "Cadeau attentionne",
-      text: "Une selection elegante a offrir quand tu veux faire plaisir avec quelque chose de vraiment gourmand.",
+      text: "Une selection elegante a offrir avec macarons, meringettes, boxes de voyage ou creations sur mesure.",
     },
   ];
   return (
@@ -91,9 +91,9 @@ export default async function Home() {
                 Une vitrine plus desirée, des creations gourmandes, et une commande simple a vivre.
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-7 text-[#6d5a50] sm:text-lg sm:leading-8">
-                Maison Waret imagine des boxes de viennoiseries, des douceurs a partager et des
-                creations sur demande avec une presentation elegante, un ton premium et un service
-                local pense pour faire plaisir.
+                Maison Waret imagine une box viennoiserie signature, des creations de saison et
+                des desserts sur commande avec une presentation elegante, un ton premium et un
+                service local pense pour faire plaisir.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -107,7 +107,7 @@ export default async function Home() {
                   href="/commande"
                   className="rounded-full border border-[#ead8cc] bg-white px-6 py-3.5 text-sm font-semibold text-[#6d5a50] transition hover:-translate-y-0.5 hover:border-[#9d5c3f] hover:text-[#9d5c3f]"
                 >
-                  Faire une demande
+                  Demander un devis
                 </Link>
               </div>
 
@@ -168,13 +168,15 @@ export default async function Home() {
                 ].map((card) => (
                   <article
                     key={card.label}
-                    className="rounded-[24px] border border-[#ead8cc] bg-white p-5 shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[28px]"
+                    className="flex min-h-[220px] flex-col justify-center rounded-[24px] border border-[#ead8cc] bg-white p-5 text-center shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[28px]"
                   >
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#9d5c3f]">
                       {card.label}
                     </p>
                     <p className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">{card.value}</p>
-                    <p className="mt-2 text-sm leading-6 text-[#6d5a50]">{card.detail}</p>
+                    <p className="mx-auto mt-2 max-w-[12rem] text-sm leading-6 text-[#6d5a50]">
+                      {card.detail}
+                    </p>
                   </article>
                 ))}
               </div>
@@ -211,12 +213,12 @@ export default async function Home() {
                 Nos incontournables
               </p>
               <h2 className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">
-                Les best sellers qui donnent envie des la premiere seconde
+                Les creations a mettre tout de suite en avant sur la vitrine
               </h2>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-[#6d5a50]">
-              Une selection courte, visuelle et gourmande pour faire naitre l&apos;envie avant
-              meme d&apos;ouvrir le catalogue complet.
+              <p className="max-w-xl text-sm leading-7 text-[#6d5a50]">
+                Une selection courte, visuelle et gourmande pour faire naitre l&apos;envie avant
+                meme d&apos;ouvrir le catalogue complet.
             </p>
           </div>
 
@@ -243,6 +245,14 @@ export default async function Home() {
                         {section.title}
                       </h2>
                     </div>
+                    {section.id === "seasonal" ? (
+                      <Link
+                        href="/produits-de-saison"
+                        className="rounded-full border border-[#ead8cc] bg-white px-5 py-3 text-sm font-semibold text-[#6d5a50] transition hover:-translate-y-0.5 hover:border-[#9d5c3f] hover:text-[#9d5c3f]"
+                      >
+                        Voir la page de saison
+                      </Link>
+                    ) : null}
                   </div>
 
                     <div className="mt-6 grid gap-5">

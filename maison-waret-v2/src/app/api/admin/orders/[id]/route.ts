@@ -17,6 +17,10 @@ const updateOrderSchema = z
     assignedTo: z.union([z.string().uuid(), z.null()]).optional(),
     archived: z.boolean().optional(),
     finalTotal: z.union([z.coerce.number().min(0).max(100000), z.null()]).optional(),
+    paymentLink: z.union([z.string().trim().url().max(2000), z.literal(""), z.null()]).optional(),
+    paymentDeadline: z
+      .union([z.string().trim().datetime({ offset: true }), z.literal(""), z.null()])
+      .optional(),
     refusalReason: z.union([z.string().trim().max(2000), z.null()]).optional(),
   })
   .refine((payload) => Object.keys(payload).length > 0, {
@@ -173,6 +177,36 @@ export async function PATCH(
     }
   }
 
+  if (parsed.data.paymentLink !== undefined) {
+    const normalizedPaymentLink = parsed.data.paymentLink?.trim() || null;
+    if (normalizedPaymentLink !== existingOrder.payment_link) {
+      updates.payment_link = normalizedPaymentLink;
+      metadata.payment_link = {
+        before: existingOrder.payment_link,
+        after: normalizedPaymentLink,
+      };
+      changeNotes.push(
+        normalizedPaymentLink ? "Lien de paiement mis a jour." : "Lien de paiement retire.",
+      );
+    }
+  }
+
+  if (parsed.data.paymentDeadline !== undefined) {
+    const normalizedPaymentDeadline = parsed.data.paymentDeadline?.trim() || null;
+    if (normalizedPaymentDeadline !== existingOrder.payment_deadline) {
+      updates.payment_deadline = normalizedPaymentDeadline;
+      metadata.payment_deadline = {
+        before: existingOrder.payment_deadline,
+        after: normalizedPaymentDeadline,
+      };
+      changeNotes.push(
+        normalizedPaymentDeadline
+          ? "Date limite de paiement mise a jour."
+          : "Date limite de paiement retiree.",
+      );
+    }
+  }
+
   if (parsed.data.refusalReason !== undefined) {
     const normalizedReason = parsed.data.refusalReason?.trim() || null;
     if (normalizedReason !== existingOrder.refusal_reason) {
@@ -242,6 +276,14 @@ export async function PATCH(
       paymentLink: existingOrder.payment_link,
       paymentDeadline: existingOrder.payment_deadline,
     };
+
+    if (typeof updates.payment_link === "string" || updates.payment_link === null) {
+      notificationOrder.paymentLink = updates.payment_link;
+    }
+
+    if (typeof updates.payment_deadline === "string" || updates.payment_deadline === null) {
+      notificationOrder.paymentDeadline = updates.payment_deadline;
+    }
 
     const notificationBatch = await recordNotificationBatch({
       admin,
