@@ -3,34 +3,43 @@ import Link from "next/link";
 import { MaisonWaretLogo } from "@/components/maison-waret-logo";
 import { PublicSiteFooter } from "@/components/public-site-footer";
 import { PublicSiteHeader } from "@/components/public-site-header";
-import { StorefrontProductCard } from "@/components/storefront-product-card";
 import { brandStory } from "@/lib/brand-content";
 import { getPublicClientReviews } from "@/lib/customer-reviews";
 import {
   getDeliveryCoverageLabel,
   getDeliveryCoverageShortLabel,
-  getHomepageProductSections,
   getStorefrontData,
 } from "@/lib/storefront";
 
 export default async function Home() {
   const { products, deliveryZones } = await getStorefrontData();
   const { reviews } = await getPublicClientReviews();
-  const { bestSellers, seasonal, signature } = getHomepageProductSections(products);
-  const curatedSections = [
+  const homeFeaturedProducts = [
     {
-      id: "signature",
-      eyebrow: "Produits signature",
-      title: "La box viennoiserie signature a mettre au centre de la home",
-      products: signature,
+      id: "signature-box",
+      eyebrow: "Signature Maison",
+      title: "Box viennoiserie signature",
+      text: "La box signature Maison Waret avec croissants bicolores, croissants classiques et pains au chocolat.",
+      href: "/catalogue?categorie=Signature%20Maison",
+      cta: "Voir la box signature",
     },
     {
-      id: "seasonal",
+      id: "custom-cake",
+      eyebrow: "Sur mesure",
+      title: "Gateau personnalise",
+      text: "Un gateau pense selon l'occasion, le nombre de parts, le style souhaite et les envies du client.",
+      href: "/commande",
+      cta: "Demander un devis",
+    },
+    {
+      id: "seasonal-products",
       eyebrow: "Produits de saison",
-      title: "Les creations de saison a retrouver aussi sur une page dediee",
-      products: seasonal,
+      title: "Les creations du moment",
+      text: "Une page dediee pour retrouver le Fraisier, le Framboisier et la box de tartelettes de saison.",
+      href: "/produits-de-saison",
+      cta: "Ouvrir la page saison",
     },
-  ].filter((section) => section.products.length > 0);
+  ];
   const serviceCards = [
     {
       label: "Fabrication artisanale",
@@ -168,7 +177,7 @@ export default async function Home() {
                 ].map((card) => (
                   <article
                     key={card.label}
-                    className="flex min-h-[220px] flex-col justify-center rounded-[24px] border border-[#ead8cc] bg-white p-5 text-center shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[28px]"
+                    className="flex min-h-[220px] flex-col justify-center rounded-[24px] border border-[#ead8cc] bg-white p-5 text-center shadow-[0_16px_38px_rgba(92,50,28,0.08)] sm:rounded-[28px] lg:min-h-[250px] lg:px-7 lg:py-7"
                   >
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#9d5c3f]">
                       {card.label}
@@ -210,61 +219,43 @@ export default async function Home() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
-                Nos incontournables
+                Mise en avant
               </p>
               <h2 className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">
-                Les creations a mettre tout de suite en avant sur la vitrine
+                Seulement les 3 univers a montrer tout de suite sur la home
               </h2>
             </div>
               <p className="max-w-xl text-sm leading-7 text-[#6d5a50]">
-                Une selection courte, visuelle et gourmande pour faire naitre l&apos;envie avant
-                meme d&apos;ouvrir le catalogue complet.
+              La home reste plus claire avec uniquement la box signature, le gateau personnalise
+              et les produits de saison.
             </p>
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {bestSellers.map((product) => (
-              <StorefrontProductCard key={product.id} product={product} compact />
+            {homeFeaturedProducts.map((item) => (
+              <article
+                key={item.id}
+                className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_18px_40px_rgba(92,50,28,0.08)] transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_24px_52px_rgba(92,50,28,0.14)] sm:rounded-[34px] sm:p-7"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
+                  {item.eyebrow}
+                </p>
+                <h3 className="mt-4 font-serif text-3xl leading-tight text-[#33251d]">
+                  {item.title}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-[#6d5a50]">{item.text}</p>
+                <div className="mt-6">
+                  <Link
+                    href={item.href}
+                    className="inline-flex rounded-full border border-[#ead8cc] bg-white px-5 py-3 text-sm font-semibold text-[#6d5a50] transition hover:-translate-y-0.5 hover:border-[#9d5c3f] hover:text-[#9d5c3f]"
+                  >
+                    {item.cta}
+                  </Link>
+                </div>
+              </article>
             ))}
           </div>
         </section>
-
-        {curatedSections.length > 0 ? (
-          <section className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-10">
-            <div
-              className={`grid gap-10 ${curatedSections.length > 1 ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}
-            >
-              {curatedSections.map((section) => (
-                <div key={section.id}>
-                  <div className="flex items-end justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
-                        {section.eyebrow}
-                      </p>
-                      <h2 className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">
-                        {section.title}
-                      </h2>
-                    </div>
-                    {section.id === "seasonal" ? (
-                      <Link
-                        href="/produits-de-saison"
-                        className="rounded-full border border-[#ead8cc] bg-white px-5 py-3 text-sm font-semibold text-[#6d5a50] transition hover:-translate-y-0.5 hover:border-[#9d5c3f] hover:text-[#9d5c3f]"
-                      >
-                        Voir la page de saison
-                      </Link>
-                    ) : null}
-                  </div>
-
-                    <div className="mt-6 grid gap-5">
-                    {section.products.map((product) => (
-                      <StorefrontProductCard key={product.id} product={product} compact />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
 
         <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-10">
           <div className="grid gap-5 lg:grid-cols-3">
