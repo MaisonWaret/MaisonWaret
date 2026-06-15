@@ -19,25 +19,37 @@ export default async function Home() {
       id: "signature-box",
       eyebrow: "Signature Maison",
       title: "Box viennoiserie signature",
-      text: "La box signature Maison Waret avec croissants bicolores, croissants classiques et pains au chocolat.",
+      text: "La creation phare a montrer tout de suite, avec croissants bicolores, croissants classiques et pains au chocolat.",
+      highlight: "Le petit-dejeuner qui fait craquer des le premier regard",
       href: "/catalogue?categorie=Signature%20Maison",
       cta: "Voir la box signature",
+      cardClass:
+        "bg-[linear-gradient(180deg,rgba(255,247,240,1)_0%,rgba(255,255,255,1)_100%)]",
+      badgeClass: "bg-[#f4e2d8] text-[#8a4f34]",
     },
     {
       id: "custom-cake",
       eyebrow: "Sur mesure",
       title: "Gateau personnalise",
       text: "Un gateau pense selon l'occasion, le nombre de parts, le style souhaite et les envies du client.",
+      highlight: "L'option premium pour les anniversaires, fetes et grandes occasions",
       href: "/commande",
       cta: "Demander un devis",
+      cardClass:
+        "bg-[linear-gradient(180deg,rgba(255,243,232,1)_0%,rgba(255,255,255,1)_100%)]",
+      badgeClass: "bg-[#f8e7dc] text-[#9d5c3f]",
     },
     {
       id: "seasonal-products",
       eyebrow: "Produits de saison",
       title: "Les creations du moment",
       text: "Une page dediee pour retrouver le Fraisier, le Framboisier et la box de tartelettes de saison.",
+      highlight: "Les desserts du moment a ne pas laisser filer",
       href: "/produits-de-saison",
       cta: "Ouvrir la page saison",
+      cardClass:
+        "bg-[linear-gradient(180deg,rgba(255,249,244,1)_0%,rgba(255,255,255,1)_100%)]",
+      badgeClass: "bg-[#fff0e4] text-[#9d5c3f]",
     },
   ];
   const serviceCards = [
@@ -216,41 +228,56 @@ export default async function Home() {
           id="best-sellers"
           className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-10"
         >
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
-                Mise en avant
+          <div className="rounded-[34px] border border-[#ead8cc] bg-[linear-gradient(135deg,#fff8f2_0%,#fff2e7_100%)] px-6 py-7 shadow-[0_18px_40px_rgba(92,50,28,0.08)] sm:px-8 sm:py-8">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#9d5c3f]">
+                  Mise en avant
+                </p>
+                <h2 className="mt-3 max-w-4xl font-serif text-3xl leading-[1.08] text-[#33251d] sm:text-4xl lg:text-5xl">
+                  Les 3 envies qui doivent donner faim des les premieres secondes
+                </h2>
+              </div>
+              <p className="max-w-xl text-sm leading-7 text-[#6d5a50] sm:text-base">
+                Une home plus forte, plus desiree et plus claire: la box signature, le gateau
+                personnalise et une vraie entree vers les produits de saison.
               </p>
-              <h2 className="mt-3 font-serif text-3xl text-[#33251d] sm:text-4xl">
-                Seulement les 3 univers a montrer tout de suite sur la home
-              </h2>
             </div>
-              <p className="max-w-xl text-sm leading-7 text-[#6d5a50]">
-              La home reste plus claire avec uniquement la box signature, le gateau personnalise
-              et les produits de saison.
-            </p>
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {homeFeaturedProducts.map((item) => (
               <article
                 key={item.id}
-                className="rounded-[30px] border border-[#ead8cc] bg-white p-6 shadow-[0_18px_40px_rgba(92,50,28,0.08)] transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_24px_52px_rgba(92,50,28,0.14)] sm:rounded-[34px] sm:p-7"
+                className={`group overflow-hidden rounded-[32px] border border-[#ead8cc] p-6 shadow-[0_18px_40px_rgba(92,50,28,0.08)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_26px_60px_rgba(92,50,28,0.16)] sm:rounded-[36px] sm:p-7 ${item.cardClass}`}
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9d5c3f]">
-                  {item.eyebrow}
-                </p>
-                <h3 className="mt-4 font-serif text-3xl leading-tight text-[#33251d]">
+                <div className="flex items-center justify-between gap-3">
+                  <span
+                    className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] ${item.badgeClass}`}
+                  >
+                    {item.eyebrow}
+                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#b27658]">
+                    Maison Waret
+                  </span>
+                </div>
+                <h3 className="mt-5 max-w-[14rem] font-serif text-3xl leading-tight text-[#33251d] sm:text-[2.4rem]">
                   {item.title}
                 </h3>
-                <p className="mt-4 text-sm leading-7 text-[#6d5a50]">{item.text}</p>
-                <div className="mt-6">
+                <p className="mt-4 text-sm font-medium uppercase tracking-[0.12em] text-[#9d5c3f]">
+                  {item.highlight}
+                </p>
+                <p className="mt-4 max-w-[24rem] text-sm leading-7 text-[#6d5a50]">{item.text}</p>
+                <div className="mt-7 flex items-center justify-between gap-4">
                   <Link
                     href={item.href}
-                    className="inline-flex rounded-full border border-[#ead8cc] bg-white px-5 py-3 text-sm font-semibold text-[#6d5a50] transition hover:-translate-y-0.5 hover:border-[#9d5c3f] hover:text-[#9d5c3f]"
+                    className="inline-flex rounded-full bg-[#33251d] px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#1f1510]"
                   >
                     {item.cta}
                   </Link>
+                  <span className="text-sm text-[#8f786c] transition duration-300 group-hover:translate-x-1">
+                    Decouvrir
+                  </span>
                 </div>
               </article>
             ))}
